@@ -22,5 +22,5 @@ for _,v in ipairs(scripts) do
     pcall(function()
         loadstring(game:HttpGet(base..v))()
     end)
-    task.wait(1)
+    task.wait(0.3)
 end
