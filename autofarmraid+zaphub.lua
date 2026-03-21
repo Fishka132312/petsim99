@@ -13,7 +13,9 @@ local scripts = {
     "Raidfarm.lua",
     "serverhoptime.lua",
     "zaphub.lua",
-    "megaspeedpets.lua"
+    "megaspeedpets.lua",
+    "webhookHuge.lua", 
+    "webhookTitanic.lua"
 }
 
 for _,v in ipairs(scripts) do
