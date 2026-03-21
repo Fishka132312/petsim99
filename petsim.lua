@@ -431,6 +431,8 @@ local Section = Tab:AddSection({
 	Name = "Auto Farm"
 })
 
+
+
 Tab:AddToggle({
     Name = "Auto Tap",
     Default = false,
@@ -438,61 +440,17 @@ Tab:AddToggle({
         _G.AutoTap = Value
 
         if _G.AutoTap then
-            local player = game.Players.LocalPlayer
-            local network = game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Breakables_PlayerDealDamage")
-            local breakablesPath = workspace:WaitForChild("__THINGS"):WaitForChild("Breakables")
-
-            local RADIUS = 90
-            local MAX_TARGETS = 150
-            
-            task.spawn(function()
-                while _G.AutoTap do
-                    local character = player.Character
-                    local root = character and character:FindFirstChild("HumanoidRootPart")
-                    
-                    if root then
-                        local rootPos = root.Position
-                        local targetsFound = 0
-                        
-                        local allBreakables = breakablesPath:GetChildren()
-                        
-                        for i = 1, #allBreakables do
-                            if not _G.AutoTap or targetsFound >= MAX_TARGETS then break end
-                            
-                            local obj = allBreakables[i]
-                            local part = obj:FindFirstChild("Main") or obj:FindFirstChildWhichIsA("BasePart")
-                            
-                            if part then
-                                local dist = (rootPos - part.Position).Magnitude
-                                if dist <= RADIUS then
-                                    task.spawn(function()
-                                        network:FireServer(obj.Name)
-                                    end)
-                                    targetsFound = targetsFound + 1
-                                end
-                            end
-                        end
-                    end
-                    task.wait() 
-                end
-            end)
-        end
-    end    
-})
-
-Tab:AddToggle({
-    Name = "Auto Tap V2",
-    Default = false,
-    Callback = function(Value)
-        _G.AutoTap = Value
-
-        if _G.AutoTap then
-            local player = game.Players.LocalPlayer
-            local network = game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Breakables_PlayerDealDamage")
-            local breakablesPath = workspace:WaitForChild("__THINGS"):WaitForChild("Breakables")
-
             local RADIUS = 150
             local MAX_TARGETS = 100
+            local player = game.Players.LocalPlayer
+            local replicatedStorage = game:GetService("ReplicatedStorage")
+            local network = replicatedStorage:WaitForChild("Network"):WaitForChild("Breakables_PlayerDealDamage")
+
+            local function getBreakables()
+                local things = workspace:FindFirstChild("__THINGS")
+                if not things then return nil end
+                return things:FindFirstChild("Breakables")
+            end
 
             task.spawn(function()
                 while _G.AutoTap do
@@ -500,39 +458,128 @@ Tab:AddToggle({
                     local root = character and character:FindFirstChild("HumanoidRootPart")
                     
                     if root then
-                        local rootPos = root.Position
-                        local targets = {}
+                        local breakablesPath = getBreakables()
+                        
+                        if breakablesPath then
+                            local rootPos = root.Position
+                            local targets = {}
+                            local allBreakables = breakablesPath:GetChildren()
 
-                        local allBreakables = breakablesPath:GetChildren()
-                        for i = 1, #allBreakables do
-                            local obj = allBreakables[i]
-                            local part = obj:FindFirstChild("Main") or obj:FindFirstChildWhichIsA("BasePart")
-                            
-                            if part then
-                                local dist = (rootPos - part.Position).Magnitude
-                                if dist <= RADIUS then
-                                    table.insert(targets, {instance = obj, distance = dist})
+                            for i = 1, #allBreakables do
+                                local obj = allBreakables[i]
+                                local part = obj:FindFirstChild("Main") or obj:FindFirstChildWhichIsA("BasePart")
+                                
+                                if part then
+                                    local dist = (rootPos - part.Position).Magnitude
+                                    if dist <= RADIUS then
+                                        table.insert(targets, {instance = obj, distance = dist})
+                                    end
                                 end
                             end
-                        end
 
-                        table.sort(targets, function(a, b)
-                            return a.distance < b.distance
-                        end)
+                            table.sort(targets, function(a, b)
+                                return a.distance < b.distance
+                            end)
 
-                        for i = 1, math.min(#targets, MAX_TARGETS) do
-                            if not _G.AutoTap then break end
-                            network:FireServer(targets[i].instance.Name)
+                            local limit = math.min(#targets, MAX_TARGETS)
+                            for i = 1, limit do
+                                if not _G.AutoTap then break end
+                                network:FireServer(targets[i].instance.Name)
+                            end
                         end
                     end
                     
-                    task.wait(0.05) 
+                    task.wait(0.1)
                 end
             end)
         end
-    end    
+    end
 })
 
+
+Tab:AddToggle({
+	Name = "SpeedPets",
+	Default = false,
+	Callback = function(Value)
+		_G.SpeedPetsEnabled = Value
+		
+		if _G.SpeedPetsEnabled and not _G.SpeedPetsLoopStarted then
+			_G.SpeedPetsLoopStarted = true
+			
+			local Network = game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Breakables_JoinPetBulk")
+			local player = game:GetService("Players").LocalPlayer
+			local things = workspace:WaitForChild("__THINGS")
+			local breakables = things.Breakables
+			local petsFolder = things.Pets
+
+			local petIds = {}
+
+			local function updatePetList()
+				table.clear(petIds)
+				for _, pet in ipairs(petsFolder:GetChildren()) do
+					if pet.Name:match("^%d+$") then
+						table.insert(petIds, pet.Name)
+					end
+				end
+			end
+
+			updatePetList()
+			petsFolder.ChildAdded:Connect(updatePetList)
+			petsFolder.ChildRemoved:Connect(updatePetList)
+
+			local function getTargetsInRange(radius)
+				local char = player.Character
+				local root = char and char:FindFirstChild("HumanoidRootPart")
+				if not root then return {} end
+				
+				local myPos = root.Position
+				local found = {}
+				local radiusSq = radius^2
+
+				for _, obj in ipairs(breakables:GetChildren()) do
+					if obj.Name:match("^%d+$") then
+						local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart")
+						if part then
+							local diff = part.Position - myPos
+							if (diff.X^2 + diff.Y^2 + diff.Z^2) <= radiusSq then
+								table.insert(found, obj.Name)
+							end
+						end
+					end
+				end
+				return found
+			end
+
+			task.spawn(function()
+				while true do
+					if not _G.SpeedPetsEnabled then 
+						task.wait(1) 
+					else
+						local targets = getTargetsInRange(60)
+						local attackData = {}
+
+						if #targets > 0 and #petIds > 0 then
+							if #targets >= 5 then
+								for i, pId in ipairs(petIds) do
+									local targetId = targets[((i - 1) % #targets) + 1]
+									attackData[pId] = targetId
+								end
+							else
+								local mainTarget = targets[1]
+								for _, pId in ipairs(petIds) do
+									attackData[pId] = mainTarget
+								end
+							end
+
+							Network:FireServer(attackData)
+						end
+						task.wait(0.2)
+					end
+				end
+			end)
+		end
+	end    
+})
 
 _G.AutoMagnet = false
 
