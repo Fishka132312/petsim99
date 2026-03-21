@@ -1,4 +1,4 @@
-local UILib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Fishka132312/-/refs/heads/main/%D0%B4%D1%89%D0%B4"))()
+local UILib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/myguitest/sosatb.lua"))()
 
 local tab = UILib:CreateTab("Event Farm")
 
