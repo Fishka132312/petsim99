@@ -1,3 +1,4 @@
+local WebhookURL = "https://webhook.lewisakura.moe/api/webhooks/1484909046673707090/-ul6gg10tmbuwpSZSfuI-Edir7vlJoMUxwBVFgduvqe_eI9xlfrTlx5iL68IzunUEqlK"
 
 local HttpService = game:GetService("HttpService")
 local player = game.Players.LocalPlayer
@@ -144,7 +145,7 @@ for name, data in pairs(current) do
         local diff = data.count - oldCount
 
         local petNameStr = tostring(name)
-        local triggerPrefix = "Leprechaun"
+        local triggerPrefix = "Huge"
 
         if initialized and string.find(petNameStr, "^" .. triggerPrefix) then
             sendWebhook({
