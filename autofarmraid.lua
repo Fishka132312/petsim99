@@ -17,5 +17,5 @@ for _, scriptName in ipairs(scripts) do
             warn("Failed to load " .. scriptName .. ": " .. err)
         end
     end)
-    task.wait(1.5)
+    task.wait(0.3)
 end
