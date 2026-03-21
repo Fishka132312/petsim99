@@ -849,6 +849,115 @@ local Section = Tab:AddSection({
 	Name = "Eggs"
 })
 
+Tab:AddDropdown({
+	Name = "Select Egg",
+	Default = "",
+	Options = (function()
+		local list = {}
+		
+		local EggsUtil = require(game.ReplicatedStorage.Library.Util.EggsUtil)
+
+		for i = 1, 999 do
+			local egg = EggsUtil.GetByNumber(i)
+			if not egg then break end
+			
+			table.insert(list, egg.name) -- НОРМАЛЬНОЕ имя яйца
+		end
+
+		return list
+	end)(),
+
+	Callback = function(Value)
+		getgenv().SelectedEggName = Value
+	end    
+})
+
+Tab:AddToggle({
+	Name = "Auto Hatch Selected Egg",
+	Default = false,
+
+	Callback = function(Value)
+		getgenv().AutoHatch = Value
+
+		if Value then
+			task.spawn(function()
+				local EggsUtil = require(game.ReplicatedStorage.Library.Util.EggsUtil)
+				local EggCmds = require(game.ReplicatedStorage.Library.Client.EggCmds)
+
+				while getgenv().AutoHatch do
+					task.wait(0.2)
+
+					local selectedName = getgenv().SelectedEggName
+					if not selectedName then continue end
+
+					local targetEgg = nil
+
+					-- ищем яйцо
+					for i = 1, 999 do
+						local egg = EggsUtil.GetByNumber(i)
+						if not egg then break end
+
+						if egg.name == selectedName then
+							targetEgg = egg
+							break
+						end
+					end
+
+					if not targetEgg then continue end
+
+					-- ✅ берём НОМЕР яйца
+					local eggNumber = targetEgg.eggNumber or targetEgg._id:match("%d+")
+					if not eggNumber then continue end
+
+					-- ✅ ищем стенд яйца (как в игре)
+					local zoneEggs = workspace:WaitForChild("__THINGS"):WaitForChild("ZoneEggs")
+					local eggStand = nil
+
+					for _, v in pairs(zoneEggs:GetDescendants()) do
+						if v:IsA("Model") and v.Name:match("^" .. eggNumber) then
+							eggStand = v
+							break
+						end
+					end
+
+					local player = game.Players.LocalPlayer
+					local char = player.Character
+					if not char or not char:FindFirstChild("HumanoidRootPart") then continue end
+
+					local root = char.HumanoidRootPart
+					local oldPos = root.CFrame
+
+					-- ✅ РЕАЛЬНЫЙ ТП
+					if eggStand and eggStand:FindFirstChild("Center") then
+						local center = eggStand.Center
+
+						if (root.Position - center.Position).Magnitude > 20 then
+							root.CFrame = center.CFrame * CFrame.new(0, 0, -6)
+							task.wait(0.4)
+						end
+					end
+
+					-- ✅ сколько можем открыть
+					local maxHatch = 1
+					pcall(function()
+						maxHatch = EggCmds.GetMaxHatch()
+					end)
+
+					-- ✅ открытие
+					pcall(function()
+						EggCmds.RequestPurchase(targetEgg._id, maxHatch)
+					end)
+
+					task.wait(0.7)
+
+					-- возврат назад
+					root.CFrame = oldPos
+				end
+			end)
+		end
+	end    
+})
+
 
 Tab:AddButton({
     Name = "Remove Egg Animation",
