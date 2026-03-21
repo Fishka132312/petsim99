@@ -12,7 +12,8 @@ local scripts = {
     "turnoff3d.lua",
     "Raidfarm.lua",
     "serverhoptime.lua",
-    "zaphub.lua"
+    "zaphub.lua",
+    "megaspeedpets.lua"
 }
 
 for _,v in ipairs(scripts) do
