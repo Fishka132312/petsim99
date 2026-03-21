@@ -1,0 +1,5 @@
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99farmantilag/refs/heads/main/petsoptimizer.lua'))()
+wait(1)
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99farmantilag/refs/heads/main/fpsboost2.lua'))()
+wait(1)
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99farmantilag/refs/heads/main/antilag.lua'))()
