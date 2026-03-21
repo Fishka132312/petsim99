@@ -93,6 +93,16 @@ task.spawn(function()
     end
 end)
 
+local function pullLeverMultiple(id)
+    for i = 1, 3 do
+        pcall(function()
+            Net.LuckyRaid_PullLever:InvokeServer(id)
+            Net.Raids_StartBoss:InvokeServer(id)
+        end)
+        task.wait(0.2)
+    end
+end
+
 task.spawn(function()
     local teleportedThisRaid = false
     local lastBossRoom = 0
@@ -138,9 +148,9 @@ task.spawn(function()
             if room % 3 == 0 and lastBossRoom ~= room then
                 lastBossRoom = room
                 task.spawn(function()
-                    if Config.BossChest1 then pcall(function() Net.LuckyRaid_PullLever:InvokeServer(1) Net.Raids_StartBoss:InvokeServer(1) end) end
-                    if Config.BossChest2 then pcall(function() Net.LuckyRaid_PullLever:InvokeServer(2) Net.Raids_StartBoss:InvokeServer(2) end) end
-                    if Config.BossChest3 then pcall(function() Net.LuckyRaid_PullLever:InvokeServer(3) Net.Raids_StartBoss:InvokeServer(3) end) end
+                    if Config.BossChest1 then pullLeverMultiple(1) end
+                    if Config.BossChest2 then pullLeverMultiple(2) end
+                    if Config.BossChest3 then pullLeverMultiple(3) end
                 end)
             end
 
@@ -149,7 +159,7 @@ task.spawn(function()
                 task.spawn(function()
                     pcall(function()
                         Net.Instancing_PlayerLeaveInstance:FireServer("LuckyRaid")
-                        task.wait(0.3) -- Минимальная задержка для сохранения данных
+                        task.wait(0.3)
                         Net.Instancing_PlayerEnterInstance:InvokeServer("LuckyEventWorld")
                     end)
                     lastLeave = tick()
