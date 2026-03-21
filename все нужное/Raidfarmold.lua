@@ -37,12 +37,14 @@ local function getBreakable()
     local target = nil
     local dist = math.huge
     local all = breakables:GetChildren()
+    local playerPos = hrp.Position
+    
     for i = 1, #all do
         local v = all[i]
         local id = v:GetAttribute("BreakableID")
-        if id and string.find(tostring(id), "LuckyRaid") then
+        if id and string.find(id, "LuckyRaid") then
             local p = v:GetPivot().Position
-            local d = (hrp.Position - p).Magnitude
+            local d = (playerPos - p).Magnitude
             if d < dist then
                 dist = d
                 target = v
@@ -50,6 +52,17 @@ local function getBreakable()
         end
     end
     return target
+end
+
+local function hasBreakables()
+    local all = breakables:GetChildren()
+    for i = 1, #all do
+        local id = all[i]:GetAttribute("BreakableID")
+        if id and string.find(id, "LuckyRaid") then
+            return true
+        end
+    end
+    return false
 end
 
 local function openChests(openedThisRoom)
@@ -67,25 +80,16 @@ local function openChests(openedThisRoom)
     end
 end
 
-local function hasBreakables()
-    for _, v in ipairs(breakables:GetChildren()) do
-        if string.find(tostring(v:GetAttribute("BreakableID") or ""), "LuckyRaid") then
-            return true
-        end
-    end
-    return false
-end
-
 task.spawn(function()
     while getgenv().LuckyRaidEnabled do
         local target = getBreakable()
         if target and target.Parent then
             local targetPos = target:GetPivot() * CFrame.new(0, 4, 0)
-            if (hrp.Position - targetPos.Position).Magnitude > 10 then
+            if (hrp.Position - targetPos.Position).Magnitude > 5 then
                 hrp.CFrame = targetPos
             end
         end
-        task.wait(0.2)
+        task.wait(0.1) 
     end
 end)
 
@@ -105,7 +109,7 @@ task.spawn(function()
             openedThisRoom = {}
             lastBossRoom = 0
 
-            if tick() - lastLeave > 3 then
+            if tick() - lastLeave > 2 then
                 local myRaid = RaidInstance.GetByOwner(player)
                 if myRaid and not myRaid:IsComplete() then
                     Network.Invoke("Raids_Join", myRaid:GetId())
@@ -133,24 +137,27 @@ task.spawn(function()
 
             if room % 3 == 0 and lastBossRoom ~= room then
                 lastBossRoom = room
-                pcall(function()
-                    if Config.BossChest1 then Net.LuckyRaid_PullLever:InvokeServer(1) Net.Raids_StartBoss:InvokeServer(1) end
-                    if Config.BossChest2 then Net.LuckyRaid_PullLever:InvokeServer(2) Net.Raids_StartBoss:InvokeServer(2) end
-                    if Config.BossChest3 then Net.LuckyRaid_PullLever:InvokeServer(3) Net.Raids_StartBoss:InvokeServer(3) end
+                task.spawn(function()
+                    if Config.BossChest1 then pcall(function() Net.LuckyRaid_PullLever:InvokeServer(1) Net.Raids_StartBoss:InvokeServer(1) end) end
+                    if Config.BossChest2 then pcall(function() Net.LuckyRaid_PullLever:InvokeServer(2) Net.Raids_StartBoss:InvokeServer(2) end) end
+                    if Config.BossChest3 then pcall(function() Net.LuckyRaid_PullLever:InvokeServer(3) Net.Raids_StartBoss:InvokeServer(3) end) end
                 end)
             end
 
             if room >= 10 and not leaving and not hasBreakables() then
                 leaving = true
-                pcall(function()
-                    Net.Instancing_PlayerLeaveInstance:FireServer("LuckyRaid")
-                    task.wait(1)
-                    Net.Instancing_PlayerEnterInstance:InvokeServer("LuckyEventWorld")
+                task.spawn(function()
+                    pcall(function()
+                        Net.Instancing_PlayerLeaveInstance:FireServer("LuckyRaid")
+                        task.wait(0.3) -- Минимальная задержка для сохранения данных
+                        Net.Instancing_PlayerEnterInstance:InvokeServer("LuckyEventWorld")
+                    end)
+                    lastLeave = tick()
+                    task.wait(2)
+                    leaving = false
                 end)
-                lastLeave = tick()
-                leaving = false
             end
         end
-        task.wait(0.3)
+        task.wait(0.1)
     end
 end)
