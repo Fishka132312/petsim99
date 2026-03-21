@@ -1,4 +1,3 @@
-local WebhookURL = "https://webhook.lewisakura.moe/api/webhooks/1484909046673707090/-ul6gg10tmbuwpSZSfuI-Edir7vlJoMUxwBVFgduvqe_eI9xlfrTlx5iL68IzunUEqlK"
 
 local HttpService = game:GetService("HttpService")
 local player = game.Players.LocalPlayer
