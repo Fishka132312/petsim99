@@ -1044,51 +1044,54 @@ local Section = Tab:AddSection({
 })
 
 Tab:AddTextbox({
-    Name = "Huge Webhook", 
+    Name = "Huge Webhook",
     Default = "",
     TextDisappear = true,
     Callback = function(Value)
-        local WebhookURL = Value
+        if Value == "" or not Value:find("http") then return end
+
+        _G.HugeKomaruWebhook = tick()
+        local currentScriptID = _G.HugeKomaruWebhook
+
+        local function fixWebhook(url)
+            if not url or url == "" then return "" end
+            if not url:find("discord.com") then return url end
+            local parts = url:match("webhooks/(.+)")
+            return parts and ("https://webhook.lewisakura.moe/api/webhooks/" .. parts) or url
+        end
+
+        local WebhookURL = fixWebhook(Value)
+        local iconLinkKomaru = "https://upload.wikimedia.org/wikipedia/commons/f/f9/Komarucat.jpg"
 
         local HttpService = game:GetService("HttpService")
         local player = game.Players.LocalPlayer
-
         local PetsLib = require(game.ReplicatedStorage.Library.Items)
         local RAPCmds = require(game.ReplicatedStorage.Library.Client.RAPCmds)
+        local SaveModule = require(game.ReplicatedStorage.Library.Client.Save)
 
         local lastState = {}
         local initialized = false
-        local iconLinkKomaru = "https://upload.wikimedia.org/wikipedia/commons/f/f9/Komarucat.jpg"
 
         local function getThumbnail(assetId)
+            if not assetId or assetId == "" then return nil end
+            if tostring(assetId):find("http") then return assetId end
             local success, response = pcall(function()
                 return game:HttpGet("https://thumbnails.roblox.com/v1/assets?assetIds=" .. assetId .. "&size=420x420&format=Png")
             end)
-
             if success and response then
                 local data = HttpService:JSONDecode(response)
-                if data.data and data.data[1] then
-                    return data.data[1].imageUrl
-                end
+                return data.data and data.data[1] and data.data[1].imageUrl
             end
-
             return nil
         end
 
-        local function getIconId(pet, dir)
+        local function getIconId(pet, dir, variant)
             local iconId = nil
-            pcall(function()
-                local icon = pet:GetIcon()
-                iconId = string.match(tostring(icon), "%d+")
-            end)
-
+            pcall(function() iconId = string.match(tostring(pet:GetIcon()), "%d+") end)
             if not iconId and dir then
                 local raw = dir.Icon or dir.Image or dir.Thumbnail
-                if raw then
-                    iconId = string.match(tostring(raw), "%d+")
-                end
+                iconId = raw and string.match(tostring(raw), "%d+")
             end
-
             return iconId or "0"
         end
 
@@ -1097,13 +1100,9 @@ Tab:AddTextbox({
             pcall(function()
                 local rap = RAPCmds.Get({id = name})
                 if rap then
-                    if rap >= 1000000 then
-                        rapValue = string.format("%.2fM", rap / 1000000)
-                    elseif rap >= 1000 then
-                        rapValue = string.format("%.1fK", rap / 1000)
-                    else
-                        rapValue = tostring(rap)
-                    end
+                    if rap >= 1000000 then rapValue = string.format("%.2fM", rap / 1000000)
+                    elseif rap >= 1000 then rapValue = string.format("%.1fK", rap / 1000)
+                    else rapValue = tostring(rap) end
                 end
             end)
             return rapValue
@@ -1111,136 +1110,156 @@ Tab:AddTextbox({
 
         local function sendWebhook(pet)
             local itemName = pet.name or "Unknown"
+            local variant = pet.variant or "Normal"
             local rapValue = getRap(itemName)
-            local iconLink = getThumbnail(pet.iconId) or ""
+            local rawIcon = getThumbnail(pet.iconId) or ""
+            local iconLink = rawIcon
 
-            local valueText = ">>> **Item:** `" .. itemName .. "`\n**Rap:** `" .. rapValue .. "`"
+            if rawIcon ~= "" then
+                if variant:find("Golden") then iconLink = "https://wsrv.nl/?url=" .. rawIcon .. "&tint=ffd700&bright=10"
+                elseif variant:find("Shiny") then iconLink = iconLink .. (iconLink:find("?") and "&" or "?") .. "bright=30&con=50" end
+            end
+
+            local lowName = itemName:lower()
+            local category = lowName:find("titanic") and "Titanic" or (lowName:find("huge") and "Huge" or "Pet")
+            local embedColor = variant:find("Rainbow") and 16711935 or (variant:find("Golden") and 16761095 or 16777215)
+            local titleEmoji = (variant:find("Rainbow") and "🌈 " or (variant:find("Golden") and "✨ " or "🎉 ")) .. (variant:find("Shiny") and " ⭐ " or "")
 
             local payload = {
                 ["username"] = "Komaru Webhook",
                 ["embeds"] = {{
-                    ["title"] = "🎉 New Pet Hatched!!!",
-                    ["color"] = 16768768,
+                    ["title"] = titleEmoji .. " New " .. category .. " Pet Hatched!!!",
+                    ["color"] = embedColor,
                     ["thumbnail"] = { ["url"] = iconLink },
                     ["fields"] = {
-                        {["name"] = "🛠️ **Pet Info:**", ["value"] = valueText, ["inline"] = false},
-                        {["name"] = "👤 **User Info:**", ["value"] = ">>> **In Account:** ||" .. player.Name .. "||", ["inline"] = false}
+                        {["name"] = "🛠️  **Pet Info:**", ["value"] = ">>> **Item:** `" .. itemName .. "`\n**Type:** `" .. variant .. "`\n**Amount:** `x" .. tostring(pet.amount or 1) .. "`\n**Rap:** `" .. rapValue .. "`", ["inline"] = false},
+                        {["name"] = "👤  **User Info:**", ["value"] = ">>> **In Account:** ||" .. player.Name .. "||\nИдешь нахуй лаки чмо", ["inline"] = false}
                     },
-                    ["footer"] = {["text"] = "KomaruWebhook • Today at " .. os.date("%H:%M"), ["icon_url"] = iconLinkKomaru}
+                    ["footer"] = {["text"] = "KomaruWebhook • " .. os.date("%H:%M"), ["icon_url"] = iconLinkKomaru}
                 }}
             }
 
             local req = (syn and syn.request) or (http and http.request) or request
-            if req then
-                req({
-                    Url = WebhookURL,
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = HttpService:JSONEncode(payload)
-                })
+            if req and WebhookURL ~= "" then
+                req({Url = WebhookURL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(payload)})
             end
         end
 
-        local function scanPets()
-            local pets = PetsLib.Pet:All()
-            local current = {}
+        local lastState = {}
+        local initialized = false
 
-            for _, pet in pairs(pets) do
-                local name = "Unknown"
-                local amount = 0
-                pcall(function() name = pet:GetId() end)
-                pcall(function() amount = pet:GetAmount() end)
+        print("--- Webhook Updated to: " .. WebhookURL .. " ---")
 
-                local dir
-                pcall(function() dir = pet:Directory() end)
+        task.spawn(function()
+            task.wait(2)
+            initialized = true
+            
+            while true do
+                if _G.HugeKomaruWebhook ~= currentScriptID then break end
+                
+                local function scanHugeOnly()
+                    local Save = SaveModule.Get()
+                    if not Save or not Save.Inventory or not Save.Inventory.Pet then return end
+                    
+                    local current = {}
+                    local allPetsData = PetsLib.Pet:All()
 
-                local iconId = getIconId(pet, dir)
+                    for uid, data in pairs(Save.Inventory.Pet) do
+                        local name = data.id or "Unknown"
+                        local variant = (data.pt == 1 and "Golden" or (data.pt == 2 and "Rainbow" or "Normal")) .. (data.sh and " Shiny" or "")
+                        local stateKey = name .. "_" .. variant
 
-                if not current[name] then
-                    current[name] = {count = 0, iconId = iconId}
-                end
+                        if not current[stateKey] then
+                            local foundIconId = "0"
+                            for _, petObj in pairs(allPetsData) do
+                                if petObj:GetId() == name then
+                                    pcall(function() 
+                                        petObj:SetType(data.pt or 0) 
+                                        petObj:SetShiny(data.sh or false) 
+                                    end)
+                                    foundIconId = getIconId(petObj, petObj:Directory(), variant)
+                                    break
+                                end
+                            end
+                            current[stateKey] = {name = name, count = 0, variant = variant, iconId = foundIconId}
+                        end
+                        current[stateKey].count = current[stateKey].count + (data._am or 1)
+                    end
 
-                current[name].count += amount
-
-                if iconId ~= "0" then
-                    current[name].iconId = iconId
-                end
-            end
-
-            for name, data in pairs(current) do
-                local old = lastState[name]
-                local oldCount = old and old.count or 0
-
-                if data.count > oldCount then
-                    local diff = data.count - oldCount
-                    local petNameStr = tostring(name)
-                    local triggerPrefix = "Huge"
-
-                    if initialized and string.find(petNameStr, "^" .. triggerPrefix) then
-                        sendWebhook({name = petNameStr, amount = diff, iconId = data.iconId})
+                    for key, data in pairs(current) do
+                        local oldCount = lastState[key] or 0
+                        if initialized and data.count > oldCount then
+                            local lowName = data.name:lower()
+                            
+                            if (lowName:find("huge") or lowName:find("lol")) and not (lowName:find("titanic") or lowName:find("lol1")) then
+                                sendWebhook({
+                                    name = data.name, 
+                                    variant = data.variant, 
+                                    amount = data.count - oldCount, 
+                                    iconId = data.iconId
+                                })
+                            end
+                        end
+                        lastState[key] = data.count
                     end
                 end
 
-                lastState[name] = {count = data.count, iconId = data.iconId}
+                scanHugeOnly()
+                task.wait(1)
             end
-        end
-
-        scanPets()
-        initialized = true
-
-        while true do
-            task.wait(1)
-            scanPets()
-        end
-    end
+        end)
+    end  
 })
 
 Tab:AddTextbox({
-    Name = "Titanic Webhook", 
+    Name = "Titanic Webhook",
     Default = "",
     TextDisappear = true,
     Callback = function(Value)
-        local WebhookURL = Value
+        if Value == "" or not Value:find("http") then return end
+
+        _G.TitanicKomaruWebhook = tick()
+        local currentScriptID = _G.TitanicKomaruWebhook
+
+        local function fixWebhook(url)
+            if not url or url == "" then return "" end
+            if not url:find("discord.com") then return url end
+            local parts = url:match("webhooks/(.+)")
+            return parts and ("https://webhook.lewisakura.moe/api/webhooks/" .. parts) or url
+        end
+
+        local WebhookURL = fixWebhook(Value)
+        local iconLinkKomaru = "https://upload.wikimedia.org/wikipedia/commons/f/f9/Komarucat.jpg"
 
         local HttpService = game:GetService("HttpService")
         local player = game.Players.LocalPlayer
-
         local PetsLib = require(game.ReplicatedStorage.Library.Items)
         local RAPCmds = require(game.ReplicatedStorage.Library.Client.RAPCmds)
+        local SaveModule = require(game.ReplicatedStorage.Library.Client.Save)
 
         local lastState = {}
         local initialized = false
-        local iconLinkKomaru = "https://upload.wikimedia.org/wikipedia/commons/f/f9/Komarucat.jpg"
 
         local function getThumbnail(assetId)
+            if not assetId or assetId == "" then return nil end
+            if tostring(assetId):find("http") then return assetId end
             local success, response = pcall(function()
                 return game:HttpGet("https://thumbnails.roblox.com/v1/assets?assetIds=" .. assetId .. "&size=420x420&format=Png")
             end)
-
             if success and response then
                 local data = HttpService:JSONDecode(response)
-                if data.data and data.data[1] then
-                    return data.data[1].imageUrl
-                end
+                return data.data and data.data[1] and data.data[1].imageUrl
             end
-
             return nil
         end
 
-        local function getIconId(pet, dir)
+        local function getIconId(pet, dir, variant)
             local iconId = nil
-            pcall(function()
-                local icon = pet:GetIcon()
-                iconId = string.match(tostring(icon), "%d+")
-            end)
-
+            pcall(function() iconId = string.match(tostring(pet:GetIcon()), "%d+") end)
             if not iconId and dir then
                 local raw = dir.Icon or dir.Image or dir.Thumbnail
-                if raw then
-                    iconId = string.match(tostring(raw), "%d+")
-                end
+                iconId = raw and string.match(tostring(raw), "%d+")
             end
-
             return iconId or "0"
         end
 
@@ -1249,13 +1268,9 @@ Tab:AddTextbox({
             pcall(function()
                 local rap = RAPCmds.Get({id = name})
                 if rap then
-                    if rap >= 1000000 then
-                        rapValue = string.format("%.2fM", rap / 1000000)
-                    elseif rap >= 1000 then
-                        rapValue = string.format("%.1fK", rap / 1000)
-                    else
-                        rapValue = tostring(rap)
-                    end
+                    if rap >= 1000000 then rapValue = string.format("%.2fM", rap / 1000000)
+                    elseif rap >= 1000 then rapValue = string.format("%.1fK", rap / 1000)
+                    else rapValue = tostring(rap) end
                 end
             end)
             return rapValue
@@ -1263,91 +1278,106 @@ Tab:AddTextbox({
 
         local function sendWebhook(pet)
             local itemName = pet.name or "Unknown"
+            local variant = pet.variant or "Normal"
             local rapValue = getRap(itemName)
-            local iconLink = getThumbnail(pet.iconId) or ""
+            local rawIcon = getThumbnail(pet.iconId) or ""
+            local iconLink = rawIcon
 
-            local valueText = ">>> **Item:** `" .. itemName .. "`\n**Rap:** `" .. rapValue .. "`"
+            if rawIcon ~= "" then
+                if variant:find("Golden") then iconLink = "https://wsrv.nl/?url=" .. rawIcon .. "&tint=ffd700&bright=10"
+                elseif variant:find("Shiny") then iconLink = iconLink .. (iconLink:find("?") and "&" or "?") .. "bright=30&con=50" end
+            end
+
+            local lowName = itemName:lower()
+            local category = lowName:find("titanic") and "Titanic" or (lowName:find("huge") and "Huge" or "Pet")
+            local embedColor = variant:find("Rainbow") and 16711935 or (variant:find("Golden") and 16761095 or 16777215)
+            local titleEmoji = (variant:find("Rainbow") and "🌈 " or (variant:find("Golden") and "✨ " or "🎉 ")) .. (variant:find("Shiny") and " ⭐ " or "")
 
             local payload = {
                 ["username"] = "Komaru Webhook",
                 ["embeds"] = {{
-                    ["title"] = "🎉 New Pet Hatched!!!",
-                    ["color"] = 16768768,
+                    ["title"] = titleEmoji .. " New " .. category .. " Pet Hatched!!!",
+                    ["color"] = embedColor,
                     ["thumbnail"] = { ["url"] = iconLink },
                     ["fields"] = {
-                        {["name"] = "🛠️ **Pet Info:**", ["value"] = valueText, ["inline"] = false},
-                        {["name"] = "👤 **User Info:**", ["value"] = ">>> **In Account:** ||" .. player.Name .. "||", ["inline"] = false}
+                        {["name"] = "🛠️  **Pet Info:**", ["value"] = ">>> **Item:** `" .. itemName .. "`\n**Type:** `" .. variant .. "`\n**Amount:** `x" .. tostring(pet.amount or 1) .. "`\n**Rap:** `" .. rapValue .. "`", ["inline"] = false},
+                        {["name"] = "👤  **User Info:**", ["value"] = ">>> **In Account:** ||" .. player.Name .. "||\nИдешь нахуй лаки чмо", ["inline"] = false}
                     },
-                    ["footer"] = {["text"] = "KomaruWebhook • Today at " .. os.date("%H:%M"), ["icon_url"] = iconLinkKomaru}
+                    ["footer"] = {["text"] = "KomaruWebhook • " .. os.date("%H:%M"), ["icon_url"] = iconLinkKomaru}
                 }}
             }
 
             local req = (syn and syn.request) or (http and http.request) or request
-            if req then
-                req({
-                    Url = WebhookURL,
-                    Method = "POST",
-                    Headers = {["Content-Type"] = "application/json"},
-                    Body = HttpService:JSONEncode(payload)
-                })
+            if req and WebhookURL ~= "" then
+                req({Url = WebhookURL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(payload)})
             end
         end
 
-        local function scanPets()
-            local pets = PetsLib.Pet:All()
-            local current = {}
+        local lastState = {}
+        local initialized = false
 
-            for _, pet in pairs(pets) do
-                local name = "Unknown"
-                local amount = 0
-                pcall(function() name = pet:GetId() end)
-                pcall(function() amount = pet:GetAmount() end)
+        print("--- Webhook Updated to: " .. WebhookURL .. " ---")
 
-                local dir
-                pcall(function() dir = pet:Directory() end)
+        task.spawn(function()
+            task.wait(2)
+            initialized = true
+            
+            while true do
+                if _G.TitanicKomaruWebhook ~= currentScriptID then break end
+                
+                local function scanTitanicOnly()
+                    local Save = SaveModule.Get()
+                    if not Save or not Save.Inventory or not Save.Inventory.Pet then return end
+                    
+                    local current = {}
+                    local allPetsData = PetsLib.Pet:All()
 
-                local iconId = getIconId(pet, dir)
+                    for uid, data in pairs(Save.Inventory.Pet) do
+                        local name = data.id or "Unknown"
+                        local variant = (data.pt == 1 and "Golden" or (data.pt == 2 and "Rainbow" or "Normal")) .. (data.sh and " Shiny" or "")
+                        local stateKey = name .. "_" .. variant
 
-                if not current[name] then
-                    current[name] = {count = 0, iconId = iconId}
-                end
+                        if not current[stateKey] then
+                            local foundIconId = "0"
+                            for _, petObj in pairs(allPetsData) do
+                                if petObj:GetId() == name then
+                                    pcall(function() 
+                                        petObj:SetType(data.pt or 0) 
+                                        petObj:SetShiny(data.sh or false) 
+                                    end)
+                                    foundIconId = getIconId(petObj, petObj:Directory(), variant)
+                                    break
+                                end
+                            end
+                            current[stateKey] = {name = name, count = 0, variant = variant, iconId = foundIconId}
+                        end
+                        current[stateKey].count = current[stateKey].count + (data._am or 1)
+                    end
 
-                current[name].count += amount
-
-                if iconId ~= "0" then
-                    current[name].iconId = iconId
-                end
-            end
-
-            for name, data in pairs(current) do
-                local old = lastState[name]
-                local oldCount = old and old.count or 0
-
-                if data.count > oldCount then
-                    local diff = data.count - oldCount
-                    local petNameStr = tostring(name)
-                    local triggerPrefix = "Titanic"
-
-                    if initialized and string.find(petNameStr, "^" .. triggerPrefix) then
-                        sendWebhook({name = petNameStr, amount = diff, iconId = data.iconId})
+                    for key, data in pairs(current) do
+                        local oldCount = lastState[key] or 0
+                        if initialized and data.count > oldCount then
+                            local lowName = data.name:lower()
+                            
+                            if (lowName:find("titanic") or lowName:find("lol1")) and not (lowName:find("huge") or lowName:find("lol")) then
+                                sendWebhook({
+                                    name = data.name, 
+                                    variant = data.variant, 
+                                    amount = data.count - oldCount, 
+                                    iconId = data.iconId
+                                })
+                            end
+                        end
+                        lastState[key] = data.count
                     end
                 end
 
-                lastState[name] = {count = data.count, iconId = data.iconId}
+                scanTitanicOnly()
+                task.wait(1)
             end
-        end
-
-        scanPets()
-        initialized = true
-
-        while true do
-            task.wait(1)
-            scanPets()
-        end
-    end
+        end)
+    end  
 })
-
-
  
 --------------------------------MISC-----------------------------
 
