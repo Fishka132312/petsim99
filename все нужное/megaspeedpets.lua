@@ -1,3 +1,6 @@
+_G.AutoPets = true
+
+
 local Network = game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Breakables_JoinPetBulk")
 local player = game:GetService("Players").LocalPlayer
 local things = workspace:WaitForChild("__THINGS")
@@ -43,7 +46,12 @@ local function getTargetsInRange(radius)
 end
 
 task.spawn(function()
-    while true do
+    while task.wait(0.2) do
+        if not _G.AutoPets then 
+            warn("🐾 AutoPets: ОСТАНОВЛЕН")
+            break 
+        end
+        
         local targets = getTargetsInRange(60)
         local attackData = {}
 
