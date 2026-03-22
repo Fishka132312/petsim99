@@ -1,7 +1,14 @@
 local visual = _G.VisualConfig or {}
 
-if visual.Disable3D == true then
-    game:GetService("RunService"):Set3dRenderingEnabled(false)
-elseif visual.Disable3D == false then
-    game:GetService("RunService"):Set3dRenderingEnabled(true)
+local function applyGraphics()
+    local RunService = game:GetService("RunService")
+    if visual.Disable3D == true then
+        RunService:Set3dRenderingEnabled(false)
+        print("--- [Visual]: 3D Rendering DISABLED (FPS Boost) ---")
+    else
+        RunService:Set3dRenderingEnabled(true)
+        print("--- [Visual]: 3D Rendering ENABLED ---")
+    end
 end
+
+applyGraphics()
