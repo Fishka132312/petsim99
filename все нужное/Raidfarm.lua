@@ -69,7 +69,6 @@ task.spawn(function()
             local target = getBreakable()
             if target and target.Parent then
                 local targetPos = target:GetPivot()
-                if (hrp.Position - targetPos.Position).Magnitude > 15 then
                     hrp.CFrame = targetPos * CFrame.new(0, 4, 0)
                 end
             end
@@ -79,7 +78,7 @@ end)
 
 print("🚀 Скрипт запущен. Фикс рычага в FinalArea добавлен.")
 
-while task.wait(0.5) do
+while task.wait(0.1) do
     if _G.AutoFarmRaid then
         local raid = RaidInstance.GetCurrent()
 
@@ -150,7 +149,7 @@ while task.wait(0.5) do
                 end
 
                 if room >= 10 then
-                    task.wait(5)
+                    task.wait(2)
                     if not getBreakable() then
                         warn("🏁 Ресет рейда...")
                         lastLeave = tick()
