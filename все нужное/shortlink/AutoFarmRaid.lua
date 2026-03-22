@@ -76,7 +76,8 @@ local rootScripts = {
     "autogifts.lua", 
     "auto%20titanic.lua", 
     "Raidfarm.lua", 
-    "megaspeedpets.lua"
+    "megaspeedpets.lua",
+    "antiafk.lua"
 }
 
 _G.AntiAdminEnabled = true 
