@@ -4,16 +4,13 @@ local currentScriptID = _G.KomaruScriptID
 local config = _G.WebhooksPetsConfig or {}
 local config = _G.WebhooksPetsConfig or {}
 
--- Функция для автоматической замены домена на lewisakura
 local function fixWebhook(url)
     if not url or url == "" then return "" end
     
-    -- Если ссылка уже прокси или не дискорд, оставляем как есть
     if not url:find("discord.com") then
         return url
     end
 
-    -- Вырезаем всё, что идет после /api/webhooks/
     local parts = url:match("webhooks/(.+)")
     if parts then
         return "https://webhook.lewisakura.moe/api/webhooks/" .. parts
@@ -22,7 +19,6 @@ local function fixWebhook(url)
     return url
 end
 
--- Применяем исправление для всех ссылок из конфига
 local HugeWebhook = fixWebhook(config.HugeWebhook or "")
 local TitanicWebhook = fixWebhook(config.TitanicWebhook or "")
 
