@@ -2,7 +2,29 @@ _G.KomaruScriptID = tick()
 local currentScriptID = _G.KomaruScriptID
 
 local config = _G.WebhooksPetsConfig or {}
-local WebhookURL = config.HugeWebhook or ""
+local config = _G.WebhooksPetsConfig or {}
+
+-- Функция для автоматической замены домена на lewisakura
+local function fixWebhook(url)
+    if not url or url == "" then return "" end
+    
+    -- Если ссылка уже прокси или не дискорд, оставляем как есть
+    if not url:find("discord.com") then
+        return url
+    end
+
+    -- Вырезаем всё, что идет после /api/webhooks/
+    local parts = url:match("webhooks/(.+)")
+    if parts then
+        return "https://webhook.lewisakura.moe/api/webhooks/" .. parts
+    end
+
+    return url
+end
+
+-- Применяем исправление для всех ссылок из конфига
+local HugeWebhook = fixWebhook(config.HugeWebhook or "")
+local TitanicWebhook = fixWebhook(config.TitanicWebhook or "")
 
 local HttpService = game:GetService("HttpService")
 local player = game.Players.LocalPlayer
@@ -146,9 +168,9 @@ local function sendWebhook(pet)
         }}
     }
 
-    local targetUrl = WebhookURL
+   local targetUrl = HugeWebhook 
     if lowName:find("titanic") then
-        targetUrl = config.TitanicWebhook or WebhookURL
+        targetUrl = TitanicWebhook
     end
 
     local req = (syn and syn.request) or (http and http.request) or request
