@@ -46,31 +46,28 @@ local function getTargetsInRange(radius)
 end
 
 task.spawn(function()
-    while task.wait(0.2) do
-        if not _G.AutoSpeedPets then 
-            warn("🐾 AutoPets: ОСТАНОВЛЕН")
-            break 
+    while true do
+        if _G.AutoSpeedPets then 
+            local targets = getTargetsInRange(60)
+            local attackData = {}
+
+            if #targets > 0 and #petIds > 0 then
+                if #targets >= 5 then
+                    for i, pId in ipairs(petIds) do
+                        local targetId = targets[((i - 1) % #targets) + 1]
+                        attackData[pId] = targetId
+                    end
+                else
+                    local mainTarget = targets[1]
+                    for _, pId in ipairs(petIds) do
+                        attackData[pId] = mainTarget
+                    end
+                end
+
+                Network:FireServer(attackData)
+            end
         end
         
-        local targets = getTargetsInRange(60)
-        local attackData = {}
-
-        if #targets > 0 and #petIds > 0 then
-            if #targets >= 5 then
-                for i, pId in ipairs(petIds) do
-                    local targetId = targets[((i - 1) % #targets) + 1]
-                    attackData[pId] = targetId
-                end
-            else
-                local mainTarget = targets[1]
-                for _, pId in ipairs(petIds) do
-                    attackData[pId] = mainTarget
-                end
-            end
-
-            Network:FireServer(attackData)
-        end
-
-        task.wait(0.2)
+        task.wait(0.2) 
     end
 end)
