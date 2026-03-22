@@ -1,3 +1,66 @@
+_G.AntiAdminEnabled = true 
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Library = ReplicatedStorage:WaitForChild("Library", 10)
+local Signal = Library and require(Library:WaitForChild("Signal"))
+
+local function enableCheats()
+    _G.AutoFarmRaid = true
+    _G.AutoTap = true
+    _G.AutoSpeedPets = true
+    print("Система: Фарм включен.")
+    if Signal then Signal.Fire("Instance Home Clicked") end
+end
+
+local function disableCheats(reason)
+    _G.AutoFarmRaid = false
+    _G.AutoTap = false
+    _G.AutoSpeedPets = false
+    print("Система защиты: ВЫКЛЮЧЕНО. Причина: " .. reason)
+    if Signal then Signal.Fire("Migration_InitAutoRaid") end
+end
+
+local function updateState()
+    local playerCount = #Players:GetPlayers()
+    
+    if _G.AntiAdminEnabled then
+        if playerCount > 1 then
+            if _G.AutoFarmRaid == true then
+                disableCheats("Защита активна, игроки на сервере.")
+            end
+        else
+            if _G.AutoFarmRaid == false then
+                enableCheats()
+            end
+        end
+    else
+        if _G.AutoFarmRaid == false then
+            print("Система: Защита отключена вручную. Игнорирую игроков.")
+            enableCheats()
+        end
+    end
+end
+
+Players.PlayerAdded:Connect(function()
+    task.wait(0.5)
+    updateState()
+end)
+
+Players.PlayerRemoving:Connect(function()
+    task.wait(1)
+    updateState()
+end)
+
+task.spawn(function()
+    while true do
+        updateState() 
+        task.wait(2)
+    end
+end)
+
+updateState()
+
 local baseUrl = "https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/"
 
 local nested = {
