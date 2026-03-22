@@ -28,7 +28,7 @@ local function updateState()
     
     if _G.AntiAdminEnabled then
         if playerCount > 1 then
-            if _G.AutoFarmRaid == true then -- чтобы не спамить в консоль
+            if _G.AutoFarmRaid == true then
                 disableCheats("Защита активна, игроки на сервере.")
             end
         else
@@ -69,7 +69,7 @@ task.spawn(function()
 end)
 
 Players.PlayerAdded:Connect(function()
-    task.wait(0.5)
+    task.wait(0.2)
     updateState()
 end)
 
@@ -81,7 +81,7 @@ end)
 task.spawn(function()
     while true do
         updateState() 
-        task.wait(2)
+        task.wait(0.2)
     end
 end)
 
