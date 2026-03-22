@@ -92,7 +92,7 @@ local function sendWebhook(pet)
 
     local lowName = itemName:lower()
 
-    local category = "Pet" -- По умолчанию
+    local category = "Pet"
     if lowName:find("titanic") then
         category = "Titanic"
     elseif lowName:find("huge") then
@@ -163,7 +163,6 @@ local function sendWebhook(pet)
 end
 
 local function runTest()
-    -- ЗАМЕНА ТУТ: Берем имя и ID из конфига
     local testName = config.TestName or "" 
     local testId = config.TestId or "" 
 
@@ -221,15 +220,14 @@ if petObj:GetId() == name then
                         petObj:SetShiny(false) 
                     end)
 
-                    -- УСТАНАВЛИВАЕМ НУЖНЫЙ ТИП
                     if pt == 1 then 
-                        pcall(function() petObj:SetType(1) end) -- Golden
+                        pcall(function() petObj:SetType(1) end)
                     elseif pt == 2 then 
-                        pcall(function() petObj:SetType(2) end) -- Rainbow
+                        pcall(function() petObj:SetType(2) end)
                     end
                     
                     if sh then 
-                        pcall(function() petObj:SetShiny(true) end) -- Shiny
+                        pcall(function() petObj:SetShiny(true) end)
                     end
 
                     local dir = petObj:Directory()
@@ -263,7 +261,7 @@ if petObj:GetId() == name then
             local diff = data.count - oldCount
             local lowName = data.name:lower()
 
-            if lowName:find("huge") or lowName:find("titanic") or lowName:find("leprechaun") then
+            if lowName:find("huge") or lowName:find("titanic") or lowName:find("lol") then
                 sendWebhook({
                     name = data.name,
                     variant = data.variant,
