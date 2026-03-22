@@ -1,4 +1,4 @@
-_G.AutoPets = true
+_G.AutoSpeedPets = true
 
 
 local Network = game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Breakables_JoinPetBulk")
@@ -47,7 +47,7 @@ end
 
 task.spawn(function()
     while task.wait(0.2) do
-        if not _G.AutoPets then 
+        if not _G.AutoSpeedPets then 
             warn("🐾 AutoPets: ОСТАНОВЛЕН")
             break 
         end
