@@ -15,6 +15,7 @@ local function getBreakables()
 end
 
 task.spawn(function()
+        print(">>> Поток AutoTap запущен! Статус:", _G.AutoTap)
     while _G.AutoTap do
         local character = player.Character
         local root = character and character:FindFirstChild("HumanoidRootPart")
