@@ -16,9 +16,10 @@ Tab:AddToggle({
     Name = "Lucky Raid Auto-Farm",
     Default = false,
     Callback = function(Value)
-        _G.LuckyRaidEnabled = Value
+        getgenv().LuckyRaidEnabled = Value
 
-        if _G.LuckyRaidEnabled then
+        if Value then
+            -- Инициализация настроек при включении
             getgenv().LuckyRaidSettings = {
                 TargetRaidLevel = "Max",
                 BossChest1 = true,
@@ -33,7 +34,6 @@ Tab:AddToggle({
                 }
             }
 
-            local Config = getgenv().LuckyRaidSettings
             local Players = game:GetService("Players")
             local ReplicatedStorage = game:GetService("ReplicatedStorage")
             local player = Players.LocalPlayer
@@ -41,7 +41,7 @@ Tab:AddToggle({
             local breakables = things:WaitForChild("Breakables")
             local Active = things:WaitForChild("__INSTANCE_CONTAINER"):WaitForChild("Active")
             local Net = ReplicatedStorage:WaitForChild("Network")
-            
+
             local Library = ReplicatedStorage:WaitForChild("Library")
             local RaidCmds = require(Library.Client.RaidCmds)
             local RaidInstance = require(Library.Client.RaidCmds.ClientRaidInstance)
@@ -50,22 +50,19 @@ Tab:AddToggle({
             local char = player.Character or player.CharacterAdded:Wait()
             local hrp = char:WaitForChild("HumanoidRootPart")
 
-            local charAddedConn
-            charAddedConn = player.CharacterAdded:Connect(function(c)
-                if not _G.LuckyRaidEnabled then charAddedConn:Disconnect() return end
-                hrp = c:WaitForChild("HumanoidRootPart")
-            end)
-
+            -- Функции-помощники
             local function getBreakable()
                 local target = nil
                 local dist = math.huge
                 local all = breakables:GetChildren()
+                local playerPos = hrp.Position
+                
                 for i = 1, #all do
                     local v = all[i]
                     local id = v:GetAttribute("BreakableID")
-                    if id and string.find(tostring(id), "LuckyRaid") then
+                    if id and string.find(id, "LuckyRaid") then
                         local p = v:GetPivot().Position
-                        local d = (hrp.Position - p).Magnitude
+                        local d = (playerPos - p).Magnitude
                         if d < dist then
                             dist = d
                             target = v
@@ -75,18 +72,16 @@ Tab:AddToggle({
                 return target
             end
 
-            task.spawn(function()
-                while _G.LuckyRaidEnabled do
-                    local target = getBreakable()
-                    if target and target.Parent then
-                        local targetPos = target:GetPivot() * CFrame.new(0, 4, 0)
-                        if (hrp.Position - targetPos.Position).Magnitude > 10 then
-                            hrp.CFrame = targetPos
-                        end
+            local function hasBreakables()
+                local all = breakables:GetChildren()
+                for i = 1, #all do
+                    local id = all[i]:GetAttribute("BreakableID")
+                    if id and string.find(id, "LuckyRaid") then
+                        return true
                     end
-                    task.wait(0.2)
                 end
-            end)
+                return false
+            end
 
             local function openChests(openedThisRoom)
                 local raidFolder = Active:FindFirstChild("LuckyRaid")
@@ -94,7 +89,7 @@ Tab:AddToggle({
                 if not interact then return end
 
                 for _, obj in ipairs(interact:GetChildren()) do
-                    if Config.OpenChests[obj.Name] and not openedThisRoom[obj] then
+                    if getgenv().LuckyRaidSettings.OpenChests[obj.Name] and not openedThisRoom[obj] then
                         openedThisRoom[obj] = true
                         task.spawn(function()
                             pcall(function() Net.Raids_OpenChest:InvokeServer(obj.Name) end)
@@ -103,15 +98,31 @@ Tab:AddToggle({
                 end
             end
 
-            local function hasBreakables()
-                for _, v in ipairs(breakables:GetChildren()) do
-                    if string.find(tostring(v:GetAttribute("BreakableID") or ""), "LuckyRaid") then
-                        return true
-                    end
+            local function pullLeverMultiple(id)
+                for i = 1, 3 do
+                    pcall(function()
+                        Net.LuckyRaid_PullLever:InvokeServer(id)
+                        Net.Raids_StartBoss:InvokeServer(id)
+                    end)
+                    task.wait(0.2)
                 end
-                return false
             end
 
+            -- Цикл авто-фарма (движение)
+            task.spawn(function()
+                while getgenv().LuckyRaidEnabled do
+                    local target = getBreakable()
+                    if target and target.Parent then
+                        local targetPos = target:GetPivot() * CFrame.new(0, 4, 0)
+                        if (hrp.Position - targetPos.Position).Magnitude > 5 then
+                            hrp.CFrame = targetPos
+                        end
+                    end
+                    task.wait(0.1) 
+                end
+            end)
+
+            -- Цикл логики рейда (вход/выход/сундуки)
             task.spawn(function()
                 local teleportedThisRaid = false
                 local lastBossRoom = 0
@@ -119,15 +130,16 @@ Tab:AddToggle({
                 local leaving = false
                 local lastLeave = 0
 
-                while _G.LuckyRaidEnabled do
+                while getgenv().LuckyRaidEnabled do
                     local raid = RaidInstance.GetCurrent()
+                    local Config = getgenv().LuckyRaidSettings
                     
                     if not raid then
                         teleportedThisRaid = false
                         openedThisRoom = {}
                         lastBossRoom = 0
 
-                        if tick() - lastLeave > 3 then
+                        if tick() - lastLeave > 2 then
                             local myRaid = RaidInstance.GetByOwner(player)
                             if myRaid and not myRaid:IsComplete() then
                                 Network.Invoke("Raids_Join", myRaid:GetId())
@@ -136,6 +148,7 @@ Tab:AddToggle({
                                 for i = 1, 10 do
                                     if not RaidInstance.GetByPortal(i) then portal = i break end
                                 end
+                                
                                 if portal then
                                     local lvl = (Config.TargetRaidLevel == "Max") and RaidCmds.GetLevel() or tonumber(Config.TargetRaidLevel)
                                     RaidCmds.Create({Difficulty = lvl or 1, Portal = portal, PartyMode = 1})
@@ -154,31 +167,33 @@ Tab:AddToggle({
 
                         if room % 3 == 0 and lastBossRoom ~= room then
                             lastBossRoom = room
-                            pcall(function()
-                                if Config.BossChest1 then Net.LuckyRaid_PullLever:InvokeServer(1) Net.Raids_StartBoss:InvokeServer(1) end
-                                if Config.BossChest2 then Net.LuckyRaid_PullLever:InvokeServer(2) Net.Raids_StartBoss:InvokeServer(2) end
-                                if Config.BossChest3 then Net.LuckyRaid_PullLever:InvokeServer(3) Net.Raids_StartBoss:InvokeServer(3) end
+                            task.spawn(function()
+                                if Config.BossChest1 then pullLeverMultiple(1) end
+                                if Config.BossChest2 then pullLeverMultiple(2) end
+                                if Config.BossChest3 then pullLeverMultiple(3) end
                             end)
                         end
 
                         if room >= 10 and not leaving and not hasBreakables() then
                             leaving = true
-                            pcall(function()
-                                Net.Instancing_PlayerLeaveInstance:FireServer("LuckyRaid")
-                                task.wait(1)
-                                Net.Instancing_PlayerEnterInstance:InvokeServer("LuckyEventWorld")
+                            task.spawn(function()
+                                pcall(function()
+                                    Net.Instancing_PlayerLeaveInstance:FireServer("LuckyRaid")
+                                    task.wait(0.3)
+                                    Net.Instancing_PlayerEnterInstance:InvokeServer("LuckyEventWorld")
+                                end)
+                                lastLeave = tick()
+                                task.wait(2)
+                                leaving = false
                             end)
-                            lastLeave = tick()
-                            leaving = false
                         end
                     end
-                    task.wait(0.3)
+                    task.wait(0.1)
                 end
             end)
         end
     end 
 })
-
 
 local Section = Tab:AddSection({
 	Name = "Auto Upgrade"
