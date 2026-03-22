@@ -13,7 +13,6 @@ local rootScripts = {
     "autogifts.lua", 
     "auto%20titanic.lua", 
     "Raidfarm.lua", 
-    "serverhoptime.lua", 
     "megaspeedpets.lua"
 }
 
