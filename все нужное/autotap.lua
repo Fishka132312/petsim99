@@ -7,7 +7,6 @@ local player = game.Players.LocalPlayer
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local network = replicatedStorage:WaitForChild("Network"):WaitForChild("Breakables_PlayerDealDamage")
 
--- функция получения актуальной папки
 local function getBreakables()
     local things = workspace:FindFirstChild("__THINGS")
     if not things then return nil end
@@ -16,7 +15,8 @@ end
 
 task.spawn(function()
         print(">>> Поток AutoTap запущен! Статус:", _G.AutoTap)
-    while _G.AutoTap do
+    while true do
+    if not _G.AutoTap then break end
         local character = player.Character
         local root = character and character:FindFirstChild("HumanoidRootPart")
         
