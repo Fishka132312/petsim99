@@ -14,42 +14,41 @@ local function getBreakables()
 end
 
 task.spawn(function()
-        print(">>> Поток AutoTap запущен! Статус:", _G.AutoTap)
+    print(">>> Поток AutoTap запущен! Статус:", _G.AutoTap)
+    
     while true do
-    if not _G.AutoTap then break end
-        local character = player.Character
-        local root = character and character:FindFirstChild("HumanoidRootPart")
-        
-        if root then
-            local breakablesPath = getBreakables()
+        if _G.AutoTap then
+            local character = player.Character
+            local root = character and character:FindFirstChild("HumanoidRootPart")
             
-            if breakablesPath then
-                local rootPos = root.Position
-                local targets = {}
+            if root then
+                local breakablesPath = getBreakables()
+                if breakablesPath then
+                    local rootPos = root.Position
+                    local targets = {}
+                    local allBreakables = breakablesPath:GetChildren()
 
-                local allBreakables = breakablesPath:GetChildren()
-
-                for i = 1, #allBreakables do
-                    local obj = allBreakables[i]
-                    local part = obj:FindFirstChild("Main") or obj:FindFirstChildWhichIsA("BasePart")
-                    
-                    if part then
-                        local dist = (rootPos - part.Position).Magnitude
-                        if dist <= RADIUS then
-                            targets[#targets + 1] = {instance = obj, distance = dist}
+                    for i = 1, #allBreakables do
+                        local obj = allBreakables[i]
+                        local part = obj:FindFirstChild("Main") or obj:FindFirstChildWhichIsA("BasePart")
+                        
+                        if part then
+                            local dist = (rootPos - part.Position).Magnitude
+                            if dist <= RADIUS then
+                                table.insert(targets, {instance = obj, distance = dist})
+                            end
                         end
                     end
-                end
 
-                table.sort(targets, function(a, b)
-                    return a.distance < b.distance
-                end)
+                    table.sort(targets, function(a, b)
+                        return a.distance < b.distance
+                    end)
 
-                local limit = math.min(#targets, MAX_TARGETS)
-
-                for i = 1, limit do
-                    if not _G.AutoTap then break end
-                    network:FireServer(targets[i].instance.Name)
+                    local limit = math.min(#targets, MAX_TARGETS)
+                    for i = 1, limit do
+                        if not _G.AutoTap then break end
+                        network:FireServer(targets[i].instance.Name)
+                    end
                 end
             end
         end
