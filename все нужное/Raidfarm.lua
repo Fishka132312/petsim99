@@ -69,6 +69,7 @@ task.spawn(function()
             local target = getBreakable()
             if target and target.Parent then
                 local targetPos = target:GetPivot()
+                if (hrp.Position - targetPos.Position).Magnitude > 15 then
                     hrp.CFrame = targetPos * CFrame.new(0, 4, 0)
                 end
             end
