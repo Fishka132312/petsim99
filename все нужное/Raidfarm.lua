@@ -62,6 +62,7 @@ local function forceBuy(bossId, roomNum)
         Net.Raids_StartBoss:InvokeServer(bossId)
     end)
         task.wait(0.3)
+        end
     if bossId == 2 then boss2Purchased = true end
 end
 
