@@ -79,7 +79,7 @@ end)
 
 print("🚀 Скрипт запущен. Фикс рычага в FinalArea добавлен.")
 
-while task.wait(0.1) do
+while task.wait(0.5) do
     if _G.AutoFarmRaid then
         local raid = RaidInstance.GetCurrent()
 
@@ -150,7 +150,7 @@ while task.wait(0.1) do
                 end
 
                 if room >= 10 then
-                    task.wait(2)
+                    task.wait(5)
                     if not getBreakable() then
                         warn("🏁 Ресет рейда...")
                         lastLeave = tick()
