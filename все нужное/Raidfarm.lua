@@ -40,7 +40,7 @@ local lastLeave = 0
 
 UserInputService.InputBegan:Connect(function(input, gpe)
     if not gpe and input.KeyCode == Enum.KeyCode.P then
-        _G.AutoFarmRaid = not _G.ScriptEnabled
+        _G.AutoFarmRaid = not _G.AutoFarmRaid
         warn(" LuckyRaid Status: " .. (_G.AutoFarmRaid and "RUNNING" or "STOPPED"))
     end
 end)
@@ -55,11 +55,13 @@ end
 
 local function forceBuy(bossId, roomNum)
     print("🛒 Покупка/Рычаг: Босс #" .. bossId .. " (Комната " .. roomNum .. ")")
+    for i = 1, 3 do
     pcall(function()
         Net.LuckyRaid_PullLever:InvokeServer(bossId)
         task.wait(0.1)
         Net.Raids_StartBoss:InvokeServer(bossId)
     end)
+        task.wait(0.3)
     if bossId == 2 then boss2Purchased = true end
 end
 
