@@ -14,7 +14,7 @@ if not getgenv().LuckyRaidSettings then
     }
 end
 
-_G.ScriptEnabled = true 
+_G.AutoFarmRaid = true 
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -40,8 +40,8 @@ local lastLeave = 0
 
 UserInputService.InputBegan:Connect(function(input, gpe)
     if not gpe and input.KeyCode == Enum.KeyCode.P then
-        _G.ScriptEnabled = not _G.ScriptEnabled
-        warn(" LuckyRaid Status: " .. (_G.ScriptEnabled and "RUNNING" or "STOPPED"))
+        _G.AutoFarmRaid = not _G.ScriptEnabled
+        warn(" LuckyRaid Status: " .. (_G.AutoFarmRaid and "RUNNING" or "STOPPED"))
     end
 end)
 
@@ -65,7 +65,7 @@ end
 
 task.spawn(function()
     while task.wait(0.1) do
-        if _G.ScriptEnabled then
+        if _G.AutoFarmRaid then
             local target = getBreakable()
             if target and target.Parent then
                 local targetPos = target:GetPivot()
@@ -80,7 +80,7 @@ end)
 print("🚀 Скрипт запущен. Фикс рычага в FinalArea добавлен.")
 
 while task.wait(0.5) do
-    if _G.ScriptEnabled then
+    if _G.AutoFarmRaid then
         local raid = RaidInstance.GetCurrent()
 
         if not raid then
