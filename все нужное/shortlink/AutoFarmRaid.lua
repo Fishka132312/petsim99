@@ -16,6 +16,34 @@ local rootScripts = {
     "megaspeedpets.lua"
 }
 
+_G.AntiAdminEnabled = true 
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Library = ReplicatedStorage:WaitForChild("Library", 10)
+local Signal = Library and require(Library:WaitForChild("Signal"))
+
+local function updateState()
+    local playerCount = #Players:GetPlayers()
+    
+    if _G.AntiAdminEnabled then
+        if playerCount > 1 then
+            if _G.AutoFarmRaid == true then -- чтобы не спамить в консоль
+                disableCheats("Защита активна, игроки на сервере.")
+            end
+        else
+            if _G.AutoFarmRaid == false then
+                enableCheats()
+            end
+        end
+    else
+        if _G.AutoFarmRaid == false then
+            print("Система: Защита отключена вручную. Игнорирую игроков.")
+            enableCheats()
+        end
+    end
+end
+
 for _, data in ipairs(nested) do
     task.spawn(function()
         local folder = data[1]
@@ -40,4 +68,21 @@ task.spawn(function()
     end)
 end)
 
-print("--- [Hub]: Все системы запущены! ---")
+Players.PlayerAdded:Connect(function()
+    task.wait(0.5)
+    updateState()
+end)
+
+Players.PlayerRemoving:Connect(function()
+    task.wait(1)
+    updateState()
+end)
+
+task.spawn(function()
+    while true do
+        updateState() 
+        task.wait(2)
+    end
+end)
+
+updateState()
