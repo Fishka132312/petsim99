@@ -1,20 +1,14 @@
-local Players = game:GetService("Players")
+local VirtualUser = game:GetService("VirtualUser")
 local VirtualInputManager = game:GetService("VirtualInputManager")
-local player = Players.LocalPlayer
+
+game.Players.LocalPlayer.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
 
 while true do
-    task.wait(300)
-    
-    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        
-        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
-        task.wait(0.5)
-        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
-        
-        task.wait(0.2)
-        
-        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.S, false, game)
-        task.wait(0.5)
-        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.S, false, game)
-    end
+    task.wait(60)
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
+    task.wait(1)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
 end
