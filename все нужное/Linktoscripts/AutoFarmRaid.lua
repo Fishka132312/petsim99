@@ -11,6 +11,21 @@ _G.WebhooksPetsConfig = {
     TestId = "", 
 }
 
+-- Auto Upgrades
+_G.AutoUpgradeConfig.LuckyRaidPets = false
+_G.AutoUpgradeConfig.LuckyRaidDamage = false
+_G.AutoUpgradeConfig.LuckyRaidAttackSpeed = false
+_G.AutoUpgradeConfig.LuckyRaidPetSpeed = false
+_G.AutoUpgradeConfig.LuckyRaidEggCost = false
+_G.AutoUpgradeConfig.LuckyRaidMoreCurrency = false
+_G.AutoUpgradeConfig.LuckyRaidXP = false
+_G.AutoUpgradeConfig.LuckyRaidBetterLoot = false
+_G.AutoUpgradeConfig.LuckyRaidHugeChest = false
+_G.AutoUpgradeConfig.LuckyRaidTitanicChest = false
+_G.AutoUpgradeConfig.LuckyRaidKeyDrops = false
+_G.AutoUpgradeConfig.LuckyRaidBossHugeChances = false
+_G.AutoUpgradeConfig.LuckyRaidBossTitanicChances = false
+
 -- Turn off 3D graphic?
 _G.VisualConfig = {
     -- false  = Default (Game is visible)
