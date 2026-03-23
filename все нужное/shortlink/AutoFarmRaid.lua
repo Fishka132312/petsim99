@@ -74,7 +74,7 @@ local rootScripts = {
     "autotap.lua",
     "automagnet.lua", 
     "autogifts.lua", 
-    "auto%20titanic.lua", 
+    "autoraidupgrades.lua", 
     "Raidfarm.lua", 
     "megaspeedpets.lua",
     "antiafk.lua"
