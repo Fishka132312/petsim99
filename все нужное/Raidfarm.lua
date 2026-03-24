@@ -67,7 +67,7 @@ local function forceBuy(bossId, roomNum)
 end
 
 task.spawn(function()
-    while task.wait(0.1) do
+    while task.wait(0.5) do
         if _G.AutoFarmRaid then
             local target = getBreakable()
             if target and target.Parent then
