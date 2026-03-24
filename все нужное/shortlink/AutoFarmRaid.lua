@@ -77,8 +77,7 @@ local rootScripts = {
     "autoraidupgrades.lua", 
     "Raidfarm.lua", 
     "megaspeedpets.lua",
-    "antiafk.lua",
-    "pettracker.lua"
+    "antiafk.lua"
 }
 
 _G.AntiAdminEnabled = true 
