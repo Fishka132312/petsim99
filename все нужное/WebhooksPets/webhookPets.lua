@@ -307,5 +307,5 @@ while true do
     end
     
     scanPets()
-    task.wait(1)
+    task.wait(30)
 end
