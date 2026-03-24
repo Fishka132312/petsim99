@@ -1,4 +1,4 @@
-_G.AutoTeleportbestlocation = true
+_G.AutoTeleportbestlocation = false
 _G.TeleportInitialized = false
 
 local function startAutoTeleport()
