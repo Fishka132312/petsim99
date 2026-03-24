@@ -13,8 +13,9 @@ local function startAutoTeleport()
     local ZoneCmds = require(ReplicatedStorage.Library.Client.ZoneCmds)
     local currentBestNum = -1
     local stayConnection = nil
+    
     local CHECK_DELAY = 1
-    local FREE_DISTANCE = 20
+    local FREE_DISTANCE = 60 
 
     local function findZoneFolder(targetNum)
         local containers = {"Map", "Map2", "Map3", "Map4", "Map5"}
@@ -53,18 +54,15 @@ local function startAutoTeleport()
             local root = char and char:FindFirstChild("HumanoidRootPart")
             if not root then return end
 
-            local p = folder:FindFirstChild("PERSISTENT")
-            if p and p:FindFirstChild("Teleport") then
-                root.CFrame = p.Teleport.CFrame
-                task.wait(0.5)
-            end
-
             local interact = folder:FindFirstChild("INTERACT")
             local spawns = interact and interact:FindFirstChild("BREAKABLE_SPAWNS")
             local mainPart = spawns and spawns:FindFirstChild("Main")
             
             if mainPart then
                 currentBestNum = bestNum
+                
+                root.CFrame = mainPart.CFrame * CFrame.new(0, 3, 0)
+                
                 if stayConnection then stayConnection:Disconnect() end
                 
                 stayConnection = RunService.Heartbeat:Connect(function()
@@ -77,7 +75,8 @@ local function startAutoTeleport()
                     end
                     
                     if root and mainPart and mainPart.Parent then
-                        if (root.Position - mainPart.Position).Magnitude > FREE_DISTANCE then
+                        local distance = (root.Position - mainPart.Position).Magnitude
+                        if distance > FREE_DISTANCE then
                             root.CFrame = mainPart.CFrame * CFrame.new(0, 3, 0)
                         end
                     end
@@ -87,7 +86,7 @@ local function startAutoTeleport()
     end
 
     task.spawn(function()
-        print("Система телепортации готова. Статус: " .. tostring(_G.AutoTeleportbestlocation))
+        print("Система мягкой телепортации запущена.")
         while true do
             pcall(doTeleport)
             task.wait(CHECK_DELAY)
