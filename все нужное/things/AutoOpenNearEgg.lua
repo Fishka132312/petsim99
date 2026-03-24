@@ -1,7 +1,7 @@
 local EggsUtil = require(game.ReplicatedStorage.Library.Util.EggsUtil)
 local EggCmds = require(game.ReplicatedStorage.Library.Client.EggCmds)
 
-_G.AutoHatch = false
+_G.AutoHatchNearEgg = false
 
 local function hatchNearest()
     local player = game.Players.LocalPlayer
@@ -48,7 +48,7 @@ local function hatchNearest()
 end
 
 task.spawn(function()
-    while _G.AutoHatch do
+    while _G.AutoHatchNearEgg do
         hatchNearest()
         task.wait(0.5)
     end
