@@ -2,7 +2,7 @@ _G.AutoMagnet = true
 
 task.spawn(function()
     while true do
-        task.wait(0.3)
+        task.wait(1.5)
         
         if _G.AutoMagnet then
             local things = workspace:FindFirstChild("__THINGS")
