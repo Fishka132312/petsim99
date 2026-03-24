@@ -1,5 +1,6 @@
 _G.AutoTeleportbestlocation = false
 _G.TeleportInitialized = false
+_G.Teleportbestlocationaccept = 0
 
 local function startAutoTeleport()
     if _G.TeleportInitialized then return end
@@ -13,9 +14,7 @@ local function startAutoTeleport()
     local ZoneCmds = require(ReplicatedStorage.Library.Client.ZoneCmds)
     local currentBestNum = -1
     local stayConnection = nil
-    
-    local CHECK_DELAY = 1
-    local FREE_DISTANCE = 60 
+    local FREE_DISTANCE = 30
 
     local function findZoneFolder(targetNum)
         local containers = {"Map", "Map2", "Map3", "Map4", "Map5"}
@@ -32,64 +31,72 @@ local function startAutoTeleport()
     end
 
     local function doTeleport()
-        if not _G.AutoTeleportbestlocation then 
-            currentBestNum = -1 
-            if stayConnection then 
-                stayConnection:Disconnect() 
-                stayConnection = nil
-            end
-            return 
-        end
+        if not _G.AutoTeleportbestlocation or tick() < _G.Teleportbestlocationaccept then return end
         
         local _, zoneData = ZoneCmds.GetMaxOwnedZone()
         if not zoneData or not zoneData.ZoneNumber then return end
         
         local bestNum = zoneData.ZoneNumber
+        local folder = findZoneFolder(bestNum)
+        if not folder then return end
         
-        if bestNum > currentBestNum then
-            local folder = findZoneFolder(bestNum)
-            if not folder then return end
-            
-            local char = player.Character
-            local root = char and char:FindFirstChild("HumanoidRootPart")
-            if not root then return end
+        local char = player.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        if not root then return end
 
-            local interact = folder:FindFirstChild("INTERACT")
-            local spawns = interact and interact:FindFirstChild("BREAKABLE_SPAWNS")
-            local mainPart = spawns and spawns:FindFirstChild("Main")
-            
-            if mainPart then
-                currentBestNum = bestNum
-                
-                root.CFrame = mainPart.CFrame * CFrame.new(0, 3, 0)
-                
-                if stayConnection then stayConnection:Disconnect() end
-                
-                stayConnection = RunService.Heartbeat:Connect(function()
-                    if not _G.AutoTeleportbestlocation or currentBestNum ~= bestNum then 
-                        if stayConnection then 
-                            stayConnection:Disconnect() 
-                            stayConnection = nil
-                        end
-                        return 
-                    end
-                    
-                    if root and mainPart and mainPart.Parent then
-                        local distance = (root.Position - mainPart.Position).Magnitude
-                        if distance > FREE_DISTANCE then
-                            root.CFrame = mainPart.CFrame * CFrame.new(0, 3, 0)
-                        end
-                    end
-                end)
+        local mainPart = nil
+        local interact = folder:FindFirstChild("INTERACT")
+        if interact then
+            for _, v in ipairs(interact:GetDescendants()) do
+                if v:IsA("BasePart") and v.Name:match("^Main") then
+                    mainPart = v
+                    break
+                end
             end
+        end
+
+        if not mainPart then
+            local persistent = folder:FindFirstChild("PERSISTENT")
+            local zoneTP = persistent and persistent:FindFirstChild("Teleport")
+            if zoneTP then
+                local distToTP = (root.Position - zoneTP.Position).Magnitude
+                if distToTP > 20 then
+                    root.CFrame = zoneTP.CFrame * CFrame.new(0, 3, 0)
+                    print("Прыжок на тех. точку Teleport для прогрузки...")
+                end
+            end
+            return
+        end
+
+        local distance = (root.Position - mainPart.Position).Magnitude
+        
+        if distance > FREE_DISTANCE then
+            root.CFrame = mainPart.CFrame * CFrame.new(0, 3, 0)
+            print("Успешный ТП на Main зоны " .. bestNum)
+        end
+
+        if not stayConnection or currentBestNum ~= bestNum then
+            if stayConnection then stayConnection:Disconnect() end
+            currentBestNum = bestNum
+            
+            stayConnection = RunService.Heartbeat:Connect(function()
+                if not _G.AutoTeleportbestlocation or tick() < _G.Teleportbestlocationaccept then
+                    if stayConnection then stayConnection:Disconnect(); stayConnection = nil end
+                    return
+                end
+                if root and mainPart and mainPart.Parent then
+                    if (root.Position - mainPart.Position).Magnitude > FREE_DISTANCE then
+                        root.CFrame = mainPart.CFrame * CFrame.new(0, 3, 0)
+                    end
+                end
+            end)
         end
     end
 
     task.spawn(function()
-        print("Система мягкой телепортации запущена.")
         while true do
             pcall(doTeleport)
-            task.wait(CHECK_DELAY)
+            task.wait(1)
         end
     end)
 end
