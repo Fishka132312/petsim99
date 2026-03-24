@@ -1,4 +1,4 @@
-_G.AutoBuyEnabled = true 
+_G.AutoBuyEnabled = false 
 
 task.spawn(function()
     local ZoneCmds = require(game.ReplicatedStorage.Library.Client.ZoneCmds)
