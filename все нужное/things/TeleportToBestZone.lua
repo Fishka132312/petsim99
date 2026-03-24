@@ -13,7 +13,7 @@ local function startAutoTeleport()
     local ZoneCmds = require(ReplicatedStorage.Library.Client.ZoneCmds)
     local currentBestNum = -1
     local stayConnection = nil
-    local CHECK_DELAY = 3
+    local CHECK_DELAY = 1
     local FREE_DISTANCE = 20
 
     local function findZoneFolder(targetNum)
@@ -31,12 +31,20 @@ local function startAutoTeleport()
     end
 
     local function doTeleport()
-        if not _G.AutoTeleportbestlocation then return end
+        if not _G.AutoTeleportbestlocation then 
+            currentBestNum = -1 
+            if stayConnection then 
+                stayConnection:Disconnect() 
+                stayConnection = nil
+            end
+            return 
+        end
         
         local _, zoneData = ZoneCmds.GetMaxOwnedZone()
         if not zoneData or not zoneData.ZoneNumber then return end
         
         local bestNum = zoneData.ZoneNumber
+        
         if bestNum > currentBestNum then
             local folder = findZoneFolder(bestNum)
             if not folder then return end
@@ -48,7 +56,7 @@ local function startAutoTeleport()
             local p = folder:FindFirstChild("PERSISTENT")
             if p and p:FindFirstChild("Teleport") then
                 root.CFrame = p.Teleport.CFrame
-                task.wait(1)
+                task.wait(0.5)
             end
 
             local interact = folder:FindFirstChild("INTERACT")
@@ -61,9 +69,13 @@ local function startAutoTeleport()
                 
                 stayConnection = RunService.Heartbeat:Connect(function()
                     if not _G.AutoTeleportbestlocation or currentBestNum ~= bestNum then 
-                        if stayConnection then stayConnection:Disconnect() end
+                        if stayConnection then 
+                            stayConnection:Disconnect() 
+                            stayConnection = nil
+                        end
                         return 
                     end
+                    
                     if root and mainPart and mainPart.Parent then
                         if (root.Position - mainPart.Position).Magnitude > FREE_DISTANCE then
                             root.CFrame = mainPart.CFrame * CFrame.new(0, 3, 0)
@@ -75,15 +87,12 @@ local function startAutoTeleport()
     end
 
     task.spawn(function()
-        print("Auto-Teleport System Started")
+        print("Система телепортации готова. Статус: " .. tostring(_G.AutoTeleportbestlocation))
         while true do
-            if _G.AutoTeleportbestlocation then
-                pcall(doTeleport)
-            end
+            pcall(doTeleport)
             task.wait(CHECK_DELAY)
         end
     end)
 end
 
--- Запуск
 startAutoTeleport()
