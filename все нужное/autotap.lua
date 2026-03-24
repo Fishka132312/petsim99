@@ -1,7 +1,7 @@
 _G.AutoTap = true
 
 local RADIUS = 150
-local MAX_TARGETS = 100
+local MAX_TARGETS = 20
 
 local player = game.Players.LocalPlayer
 local replicatedStorage = game:GetService("ReplicatedStorage")
@@ -14,7 +14,7 @@ local function getBreakables()
 end
 
 task.spawn(function()
-    print(">>> Поток AutoTap запущен! Статус:", _G.AutoTap)
+    print("Автофарм работает")
     
     while true do
         if _G.AutoTap then
@@ -53,6 +53,6 @@ task.spawn(function()
             end
         end
         
-        task.wait(0.05)
+        task.wait(0.2)
     end
 end)
