@@ -12,7 +12,7 @@ local function hatchNearest()
     local eggsFolder = game.Workspace:WaitForChild("__THINGS"):WaitForChild("Eggs")
     
     local nearestEggData = nil
-    local minDist = 50
+    local minDist = 50 
 
     for _, v in pairs(eggsFolder:GetDescendants()) do
         if v:IsA("Model") and v.Name:match("^%d+") then
@@ -46,10 +46,10 @@ local function hatchNearest()
 end
 
 task.spawn(function()
-    print("Скрипт загружен. Статус: " .. tostring(_G.AutoHatchNearEgg))
+    print("Скрипт мониторит переменную _G.AutoHatchNearEgg...")
     
     while true do
-        if _G.AutoHatchNearEgg then
+        if _G.AutoHatchNearEgg == true then
             hatchNearest()
             task.wait(0.5)
         else
