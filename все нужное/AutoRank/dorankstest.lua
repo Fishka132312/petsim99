@@ -1,4 +1,5 @@
 _G.Autorank = false
+_G.IsDoingJarQuest = false
 
 local Save = require(game.ReplicatedStorage.Library.Client.Save)
 local QuestCmds = require(game.ReplicatedStorage.Library.Client.QuestCmds)
@@ -32,6 +33,7 @@ task.spawn(function()
         local needsRainbow = false
         local needsGold = false
         local needsRainbow = false
+        _G.IsDoingJarQuest = false
 
         if _G.Autorank then
             local data = Save.Get()
@@ -66,6 +68,7 @@ end
                     -- 2. Квесты на Coin Jar
 if string.find(title, "coin jar") then
     needsJar = true
+    _G.IsDoingJarQuest = true
     -- Добавляем проверку: если в квесте про джары просят "best area", включаем фарм/тп
     if string.find(title, "best area") then
         needsFarm = true
