@@ -40,8 +40,6 @@ end
 local function SmartHatch()
     if IsHatching() then return end
 
-    UnlockAllAvailableEggs()
-    task.wait(0.1)
 
     local eggId, eggNum = GetBestEggId()
     if not eggId then return end
@@ -88,7 +86,15 @@ local function SmartHatch()
 end
 
 task.spawn(function()
-    print("--- СИСТЕМА TOTAL UNLOCK + AUTO HATCH ЗАПУЩЕНА ---")
+    print("--- МОНИТОРИНГ НОВЫХ ЯИЦ ЗАПУЩЕН ---")
+    while true do
+        UnlockAllAvailableEggs()
+        task.wait(5) 
+    end
+end)
+
+task.spawn(function()
+    print("--- СИСТЕМА AUTO-HATCH ЗАПУЩЕНА ---")
     while true do
         if _G.AutoHatchBestEggForRank then
             pcall(SmartHatch)
