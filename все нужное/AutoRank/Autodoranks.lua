@@ -4,10 +4,10 @@ local Save = require(game.ReplicatedStorage.Library.Client.Save)
 local QuestCmds = require(game.ReplicatedStorage.Library.Client.QuestCmds)
 
 local function updateStates(needsFarm, needsJar, needsComet)
-    _G.AutoSpeedPets = needsFarm
-    _G.AutoMagnet = needsFarm
+    _G.AutoSpeedPetsForRank = needsFarm
+    _G.AutoMagnetForRank = needsFarm
     _G.AutoTeleportbestlocation = needsFarm
-    _G.AutoTap = needsFarm
+    _G.AutoTapForRank = needsFarm
     
     _G.CoinJarUse = needsJar
     _G.CometUse = needsComet
