@@ -45,10 +45,25 @@ task.spawn(function()
                     local target = goal.Amount or 1
                     if current >= target then continue end
 
-                    -- 1. Квесты на фарм (зона / алмазы)
-                    if string.find(title, "best area") or string.find(title, "Diamonds") then
-                        needsFarm = true
-                    end
+                    -- 1. Квесты на фарм (зона / алмазы / ломание объектов)
+local isDiamondQuest = string.find(title, "diamonds")
+local isBreakQuest = string.find(title, "break")
+local isEarnQuest = string.find(title, "earn") or string.find(title, "collect")
+
+if string.find(title, "best area") or isDiamondQuest then
+    needsFarm = true
+    
+    -- Логика конкретно для алмазов
+    if isDiamondQuest then
+        if isBreakQuest then
+            -- Выведет: [RANK] Квест: Сломать 50 Diamond Breakables
+            print("--- [RANK] Квест: Сломать " .. target .. " Diamond Breakables")
+        elseif isEarnQuest then
+            -- Выведет: [RANK] Квест: Заработать 5000 Diamonds
+            print("--- [RANK] Квест: Заработать " .. target .. " Diamonds")
+        end
+    end
+end
                     
                     -- 2. Квесты на Coin Jar
 if string.find(title, "coin jar") then
