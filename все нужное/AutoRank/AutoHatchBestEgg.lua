@@ -1,4 +1,4 @@
-_G.AutoHatchBestEggForRank = false
+_G.AutoHatchBestEggForRanks = false
 _G.ReturnToPos = true 
 
 local Library = game.ReplicatedStorage:WaitForChild("Library")
@@ -6,6 +6,8 @@ local Network = require(Library.Client.Network)
 local EggCmds = require(Library.Client.EggCmds)
 local Directory = require(Library.Directory)
 local Variables = require(Library.Variables)
+local CurrencyCmds = require(Library.Client.CurrencyCmds)
+local Balancing = require(Library.Balancing)
 
 local function IsHatching()
     if Variables.OpeningEgg and Variables.OpeningEgg > 0 then return true end
@@ -42,6 +44,23 @@ local function SmartHatch()
     local oldPos = root.CFrame
     local eggId, eggNum = GetBestEgg()
     if not eggId then return end
+
+    local eggData = Directory.Eggs[eggId]
+    if eggData and eggData.currency then
+        local success, price = pcall(function() 
+            return Balancing.CalcEggPrice(eggId, EggCmds.GetMaxHatch()) 
+        end)
+        
+        if not success then
+            success, price = pcall(function() return Balancing.GetEggPrice(eggId) end)
+        end
+
+        local myMoney = CurrencyCmds.Get(eggData.currency)
+        
+        if success and myMoney < price then
+            return 
+        end
+    end
 
     local eggModel = nil
     local things = game.Workspace:FindFirstChild("__THINGS")
@@ -94,7 +113,7 @@ end
 task.spawn(function()
     print("--- СИСТЕМА AUTO-HATCH ЗАПУЩЕНА ---")
     while true do
-        if _G.AutoHatchBestEggForRank then
+        if _G.AutoHatchBestEggForRanks then
             local ok, err = pcall(SmartHatch)
             if not ok then 
                 warn("Критическая ошибка цикла: " .. tostring(err)) 
