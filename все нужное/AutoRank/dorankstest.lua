@@ -3,7 +3,7 @@ _G.Autorank = false
 local Save = require(game.ReplicatedStorage.Library.Client.Save)
 local QuestCmds = require(game.ReplicatedStorage.Library.Client.QuestCmds)
 
-local function updateStates(needsFarm, needsJar, needsComet, needsHatch)
+local function updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow)
     -- Фарм и передвижение
     _G.AutoSpeedPetsForRank = needsFarm
     _G.AutoMagnetForRank = needsFarm
@@ -14,8 +14,10 @@ local function updateStates(needsFarm, needsJar, needsComet, needsHatch)
     _G.CoinJarUse = needsJar
     _G.CometUse = needsComet
     
-    -- Открытие яиц
+    -- Открытие яиц и Крафт
     _G.AutoHatchBestEggForRank = needsHatch
+    _G.CraftPetsGold = needsGold
+    _G.CraftPetsRainbow = needsRainbow
 end
 
 task.spawn(function()
@@ -103,6 +105,21 @@ if string.find(title, "use") and string.find(title, "flag") then
         print("--- [RANK] Квест на флаг (единичный)")
     end
 end
+
+-- 7. КРАФТ (Золотые и Радужные)
+                    local isMakeQuest = string.find(title, "make")
+                    if isMakeQuest then
+                        if string.find(title, "rainbow") then
+                            needsRainbow = true
+                            needsGold = true -- Включаем и голд, чтобы было из чего делать радужных
+                            needsHatch = true -- Идем к яйцам за материалом
+                            print("--- [RANK] Квест на Rainbow петов!")
+                        elseif string.find(title, "gold") or string.find(title, "golden") then
+                            needsGold = true
+                            needsHatch = true -- Идем к яйцам
+                            print("--- [RANK] Квест на Golden петов!")
+                        end
+                    end
                 end
             end
         end
