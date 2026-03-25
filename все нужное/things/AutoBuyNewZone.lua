@@ -1,4 +1,4 @@
-_G.AutoBuyEnabled = false
+_G.AutoBuyNewZone = false
 
 task.spawn(function()
     local ZoneCmds = require(game.ReplicatedStorage.Library.Client.ZoneCmds)
@@ -6,7 +6,7 @@ task.spawn(function()
     local Network = require(game.ReplicatedStorage.Library.Client.Network)
 
     while true do
-        if _G.AutoBuyEnabled == true then
+        if _G.AutoBuyNewZone == true then
             local _, maxZoneData = ZoneCmds.GetMaxOwnedZone()
             
             if maxZoneData and maxZoneData.ZoneNumber then
