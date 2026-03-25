@@ -25,6 +25,7 @@ local scripts = {
     'AutoRank/AutoFlag.lua',
     'AutoRank/AutoCraftPets.lua',
     'autoraidupgrades.lua',
+    'AutoHatchLegendary.lua',
 }
 
 local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/'
@@ -243,12 +244,31 @@ Tab:AddToggle({
     end    
 })
 
-
 Tab:AddToggle({
     Name = "Auto Buy New Zones",
     Default = false,
     Callback = function(Value)
-      _G.AutoBuyNewZone = Value
+        _G.AutoBuyNewZone = Value
+        
+        if Value then
+            task.spawn(function()
+                while _G.AutoBuyNewZone do
+                    if not _G.AutoBuyNewZone then break end
+
+                    if not _G.IsDoingJarQuest then
+                        local success = game:GetService("ReplicatedStorage").Network.Zone_RequestPurchase:InvokeServer() 
+                        
+                        if success then
+                            print("--- [AUTO-BUY] Попытка покупки зоны успешна!")
+                        end
+                    else
+                        print("--- [PAUSE] Покупка зон приостановлена: активен квест на Coin Jar")
+                    end
+                    
+                    task.wait(5)
+                end
+            end)
+        end
     end    
 })
 
