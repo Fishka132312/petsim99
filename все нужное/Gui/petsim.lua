@@ -188,26 +188,25 @@ local Section = Tab:AddSection({
 	Name = "Auto Farm"
 })
 
+local scripts = {
+    'autotap.lua',
+    'megaspeedpets.lua',
+    'automagnet.lua',
+    'things/TeleportToBestZone.lua',
+    'things/AutoBuyNewZone.lua.lua',
+    'things/AutoCollectRanks.lua',
+    'things/AutoCollectFreeGifts.lua',
+}
 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/autotap.lua'))()
-_G.AutoTap = false
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/megaspeedpets.lua'))()
-_G.AutoSpeedPets = false
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/automagnet.lua'))()
-_G.AutoMagnet = false
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/things/AutoBuyNewZone.lua'))()
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/things/TeleportToBestZone.lua'))()
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/things/AutoCollectRanks.lua'))()
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/things/AutoCollectFreeGifts.lua'))()
+local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/'
 
 
- 
 
 Tab:AddToggle({
     Name = "Auto Tap",
     Default = false,
     Callback = function(Value)
-       _G.AutoTap = Value
+       _G.ManualTap = Value
     end
 })
 
@@ -263,6 +262,50 @@ Tab:AddToggle({
        _G.AutoCollectGifts = Value
     end    
 })
+
+local Section = Tab:AddSection({
+	Name = "Auto Rank"
+})
+
+
+
+
+local Toggle = Tab:AddToggle({
+    Name = "Auto Rank",
+    Default = false,
+    Callback = function(Value)
+        _G.Autorank = Value
+        print("Auto Rank статус:", Value)
+    end
+})
+
+local scripts = {
+    'AutoRank/autotap.lua',
+    'AutoRank/megaspeedpets.lua',
+    'AutoRank/automagnet.lua',
+    'AutoRank/TeleportToBestZone.lua',
+    'AutoRank/Autodoranks.lua',
+    'AutoRank/AutoCoinJar.lua',
+    'AutoRank/AutoComets.lua',
+    'AutoRank/AutoHatchBestEgg.lua',
+    'AutoRank/AutoPotions.lua',
+    'AutoRank/AutoLegendaryHatch.lua',
+    'AutoRank/UnlockEggs.lua'
+}
+
+local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/'
+
+for _, scriptPath in ipairs(scripts) do
+    task.spawn(function()
+        local success, err = pcall(function()
+            loadstring(game:HttpGet(baseUrl .. scriptPath))()
+        end)
+        if not success then
+            warn("Ошибка загрузки скрипта " .. scriptPath .. ": " .. err)
+        end
+    end)
+end
+
 
 --------------------------------Eggs-----------------------------
 
@@ -432,6 +475,8 @@ local Section = Tab:AddSection({
 	Name = "Fps Boost"
 })
 
+loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Antilag/FpsCap.lua'))()
+
 Tab:AddButton({
 	Name = "Antilag",
 	Callback = function()
@@ -472,9 +517,28 @@ Tab:AddToggle({
     end    
 })
 
+Tab:AddTextbox({
+	Name = "Set FPS Cap",
+	Default = "60",
+	TextDisappear = false,
+	Callback = function(Value)
+		local num = tonumber(Value)
+		
+		if num and num > 0 then
+			_G.FPS_Value = num
+			_G.FPS_Enabled = true
+		else
+			_G.FPS_Enabled = false
+		end
+	end	  
+})
+
 Tab:AddButton({
 	Name = "Total Gvno-Graphix💀",
 	Callback = function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Antilag/PetsOptimizer.lua'))()
     end    
 })
+
+
+
