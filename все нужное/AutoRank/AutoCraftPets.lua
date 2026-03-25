@@ -7,8 +7,8 @@ local MasteryConfigs = require(Library.Client.MasteryCmds)
 local MachineCmds = require(Library.Client:WaitForChild("MachineCmds"))
 local Signal = require(Library:WaitForChild("Signal"))
 
-_G.CraftPetsGold = true
-_G.CraftPetsRainbow = true
+_G.CraftPetsGold = false
+_G.CraftPetsRainbow = false
 
 local function GetBestEgg()
     local bestId = nil
