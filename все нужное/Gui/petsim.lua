@@ -1,6 +1,52 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
 local Window = OrionLib:MakeWindow({Name = "pet sim99", HidePremium = false, SaveConfig = true, ConfigFolder = "pet sim99"})
 
+local scripts = {
+    'autotap.lua',
+    'megaspeedpets.lua',
+    'automagnet.lua',
+    'things/TeleportToBestZone.lua',
+    'things/AutoBuyNewZone.lua',
+    'things/AutoCollectRanks.lua',
+    'things/AutoCollectFreeGifts.lua',
+    'things/AutoHatchBestEgg.lua',
+    'things/AutoOpenNearEgg.lua',
+    'AutoRank/autotap.lua',
+    'AutoRank/megaspeedpets.lua',
+    'AutoRank/automagnet.lua',
+    'AutoRank/TeleportToBestZone.lua',
+    'AutoRank/dorankstest.lua',
+    'AutoRank/AutoCoinJar.lua',
+    'AutoRank/AutoComets.lua',
+    'AutoRank/AutoHatchBestEgg.lua',
+    'AutoRank/AutoPotions.lua',
+    'AutoRank/AutoLegendaryHatch.lua',
+    'AutoRank/UnlockEggs.lua',
+    'AutoRank/AutoFlag.lua',
+    'AutoRank/AutoCraftPets.lua',
+    'autoraidupgrades.lua',
+}
+
+local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/'
+
+_G.AutoUpgradeConfig = _G.AutoUpgradeConfig or {} 
+
+_G.AutoUpgradeConfig.Enabled = true
+_G.AutoUpgradeConfig.Interval = 1
+_G.AutoUpgradeConfig.LuckyRaidPets = false
+_G.AutoUpgradeConfig.LuckyRaidDamage = false
+_G.AutoUpgradeConfig.LuckyRaidAttackSpeed = false
+_G.AutoUpgradeConfig.LuckyRaidPetSpeed = false
+_G.AutoUpgradeConfig.LuckyRaidEggCost = false
+_G.AutoUpgradeConfig.LuckyRaidMoreCurrency = false
+_G.AutoUpgradeConfig.LuckyRaidXP = false
+_G.AutoUpgradeConfig.LuckyRaidBetterLoot = false
+_G.AutoUpgradeConfig.LuckyRaidHugeChest = false
+_G.AutoUpgradeConfig.LuckyRaidTitanicChest = false
+_G.AutoUpgradeConfig.LuckyRaidKeyDrops = false
+_G.AutoUpgradeConfig.LuckyRaidBossHugeChances = false
+_G.AutoUpgradeConfig.LuckyRaidBossTitanicChances = false
+
 local Tab = Window:MakeTab({
 	Name = "Event farm",
 	Icon = "rbxassetid://4483345998",
@@ -32,26 +78,6 @@ Tab:AddToggle({
 local Section = Tab:AddSection({
 	Name = "Auto Upgrade"
 })
-
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/autoraidupgrades.lua'))()
-
-_G.AutoUpgradeConfig = _G.AutoUpgradeConfig or {} 
-
-_G.AutoUpgradeConfig.Enabled = true
-_G.AutoUpgradeConfig.Interval = 1
-_G.AutoUpgradeConfig.LuckyRaidPets = false
-_G.AutoUpgradeConfig.LuckyRaidDamage = false
-_G.AutoUpgradeConfig.LuckyRaidAttackSpeed = false
-_G.AutoUpgradeConfig.LuckyRaidPetSpeed = false
-_G.AutoUpgradeConfig.LuckyRaidEggCost = false
-_G.AutoUpgradeConfig.LuckyRaidMoreCurrency = false
-_G.AutoUpgradeConfig.LuckyRaidXP = false
-_G.AutoUpgradeConfig.LuckyRaidBetterLoot = false
-_G.AutoUpgradeConfig.LuckyRaidHugeChest = false
-_G.AutoUpgradeConfig.LuckyRaidTitanicChest = false
-_G.AutoUpgradeConfig.LuckyRaidKeyDrops = false
-_G.AutoUpgradeConfig.LuckyRaidBossHugeChances = false
-_G.AutoUpgradeConfig.LuckyRaidBossTitanicChances = false
 
 Tab:AddToggle({
     Name = "Raid Pets Slots",
@@ -188,30 +214,6 @@ local Section = Tab:AddSection({
 	Name = "Auto Farm"
 })
 
-local scripts = {
-    'autotap.lua',
-    'megaspeedpets.lua',
-    'automagnet.lua',
-    'things/TeleportToBestZone.lua',
-    'things/AutoBuyNewZone.lua',
-    'things/AutoCollectRanks.lua',
-    'things/AutoCollectFreeGifts.lua',
-    'AutoRank/autotap.lua',
-    'AutoRank/megaspeedpets.lua',
-    'AutoRank/automagnet.lua',
-    'AutoRank/TeleportToBestZone.lua',
-    'AutoRank/dorankstest.lua',
-    'AutoRank/AutoCoinJar.lua',
-    'AutoRank/AutoComets.lua',
-    'AutoRank/AutoHatchBestEgg.lua',
-    'AutoRank/AutoPotions.lua',
-    'AutoRank/AutoLegendaryHatch.lua',
-    'AutoRank/UnlockEggs.lua',
-    'AutoRank/AutoFlag.lua',
-    'AutoRank/AutoCraftPets.lua',
-}
-
-local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/'
 
 
 
@@ -246,7 +248,7 @@ Tab:AddToggle({
     Name = "Auto Buy New Zones",
     Default = false,
     Callback = function(Value)
-      _G.AutoBuyEnabled = Value
+      _G.AutoBuyNewZone = Value
     end    
 })
 
@@ -278,11 +280,8 @@ local Section = Tab:AddSection({
 	Name = "Auto Rank"
 })
 
-
-
-
 local Toggle = Tab:AddToggle({
-    Name = "Auto Rank",
+    Name = "Auto Rank (BETA)",
     Default = false,
     Callback = function(Value)
         _G.Autorank = Value
@@ -316,11 +315,6 @@ local Tab = Window:MakeTab({
 local Section = Tab:AddSection({
 	Name = "Eggs"
 })
-
-
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/things/AutoHatchBestEgg.lua'))()
-loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/things/AutoCollectFreeGifts.lua'))()
-
 
 Tab:AddToggle({
     Name = "Auto Hatch Best Egg",
