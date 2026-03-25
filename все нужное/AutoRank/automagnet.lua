@@ -4,7 +4,7 @@ task.spawn(function()
     while true do
         task.wait(1.5)
         
-        if _G.AutoMagnet then
+        if _G.AutoMagnetForRank then
             local things = workspace:FindFirstChild("__THINGS")
             local orbs = things and things:FindFirstChild("Orbs")
             
@@ -12,7 +12,7 @@ task.spawn(function()
                 local allOrbs = orbs:GetChildren()
                 
                 for _, orb in pairs(allOrbs) do
-                    if not _G.AutoMagnet then break end
+                    if not _G.AutoMagnetForRank then break end
                     
                     local orbName = tonumber(orb.Name)
                     if orbName then
