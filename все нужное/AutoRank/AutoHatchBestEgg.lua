@@ -1,4 +1,4 @@
-_G.AutoHatchBestEggForRank = false
+_G.AutoHatchBestEggForRank = true
 _G.ReturnToPos = true 
 
 local Library = game.ReplicatedStorage:WaitForChild("Library")
@@ -7,14 +7,17 @@ local EggCmds = require(Library.Client.EggCmds)
 local Directory = require(Library.Directory)
 local Variables = require(Library.Variables)
 
+-- Проверка анимации
 local function IsHatching()
     if Variables.OpeningEgg and Variables.OpeningEgg > 0 then return true end
     local playerGui = game.Players.LocalPlayer:FindFirstChild("PlayerGui")
     return playerGui and (playerGui:FindFirstChild("EggOpen") or playerGui:FindFirstChild("EggSkip"))
 end
 
+-- Функция массовой разблокировки всех яиц
 local function UnlockAllAvailableEggs()
     for eggId, info in pairs(Directory.Eggs) do
+        -- Пробуем разблокировать каждое яйцо по очереди
         task.spawn(function()
             pcall(function()
                 game:GetService("ReplicatedStorage").Network.Eggs_RequestUnlock:InvokeServer(eggId)
@@ -23,11 +26,13 @@ local function UnlockAllAvailableEggs()
     end
 end
 
+-- Поиск самого лучшего яйца по номеру (из тех, что есть в списке)
 local function GetBestEggId()
     local bestId = nil
     local maxNum = -1
     for id, info in pairs(Directory.Eggs) do
         if info.eggNumber and info.eggNumber > maxNum then
+            -- Проверяем, не заблокировано ли оно (после нашего Unlock)
             if not EggCmds.IsEggLocked(id) then
                 maxNum = info.eggNumber
                 bestId = id
@@ -40,7 +45,11 @@ end
 local function SmartHatch()
     if IsHatching() then return end
 
+    -- 1. Сначала пытаемся «прожать» анлок на всё подряд
+    UnlockAllAvailableEggs()
+    task.wait(0.1) -- Короткая пауза для обработки
 
+    -- 2. Выбираем лучшее из разблокированных
     local eggId, eggNum = GetBestEggId()
     if not eggId then return end
 
@@ -48,6 +57,7 @@ local function SmartHatch()
     local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
     if not root then return end
 
+    -- 3. Поиск модели для телепорта
     local eggModel = nil
     local things = workspace:FindFirstChild("__THINGS")
     if things then
@@ -78,6 +88,7 @@ local function SmartHatch()
         task.wait(0.3)
     end
 
+    -- 4. Покупка
     local success, err = Network.Invoke("Eggs_RequestPurchase", eggId, EggCmds.GetMaxHatch())
     
     if _G.ReturnToPos and needTeleport then
@@ -85,16 +96,9 @@ local function SmartHatch()
     end
 end
 
+-- Цикл
 task.spawn(function()
-    print("--- МОНИТОРИНГ НОВЫХ ЯИЦ ЗАПУЩЕН ---")
-    while true do
-        UnlockAllAvailableEggs()
-        task.wait(5) 
-    end
-end)
-
-task.spawn(function()
-    print("--- СИСТЕМА AUTO-HATCH ЗАПУЩЕНА ---")
+    print("--- СИСТЕМА TOTAL UNLOCK + AUTO HATCH ЗАПУЩЕНА ---")
     while true do
         if _G.AutoHatchBestEggForRank then
             pcall(SmartHatch)
