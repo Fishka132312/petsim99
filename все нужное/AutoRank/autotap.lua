@@ -17,7 +17,7 @@ task.spawn(function()
     print("Автофарм работает")
     
     while true do
-        if _G.AutoTap then
+        if _G.AutoTapForRank then
             local character = player.Character
             local root = character and character:FindFirstChild("HumanoidRootPart")
             
@@ -46,7 +46,7 @@ task.spawn(function()
 
                     local limit = math.min(#targets, MAX_TARGETS)
                     for i = 1, limit do
-                        if not _G.AutoTap then break end
+                        if not _G.AutoTapForRank then break end
                         network:FireServer(targets[i].instance.Name)
                     end
                 end
