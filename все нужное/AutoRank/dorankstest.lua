@@ -16,8 +16,14 @@ local function updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGo
     _G.CometUse = needsComet
     
     -- Открытие яиц и Крафт
-    _G.AutoHatchBestEggForRank = needsHatch
-    _G.AutoHatchLegendary = needsLegendary
+    if needsLegendary then
+        _G.AutoHatchBestEggForRank = false
+        _G.AutoHatchLegendary = true
+    else
+        _G.AutoHatchBestEggForRank = needsHatch
+        _G.AutoHatchLegendary = false
+    end
+
     _G.CraftPetsGold = needsGold
     _G.CraftPetsRainbow = needsRainbow
 end
@@ -34,6 +40,7 @@ task.spawn(function()
         local needsRainbow = false
         local needsLegendary = false
         _G.IsDoingJarQuest = false
+        _G.AutoUsePotionsForRank = false
 
         if _G.Autorank then
             local data = Save.Get()
@@ -159,10 +166,12 @@ if isMakeQuest then
 end
 
 -- 8. Квест на Легендарных питомцев (Hatch a Legendary)
+-- 8. Квест на Легендарных питомцев (Hatch a Legendary)
 if string.find(title, "hatch") and (string.find(title, "legendary") or string.find(title, "above")) then
     needsLegendary = true
-    needsHatch = true -- Включаем открытие яиц, чтобы выбить легу
-    print("--- [RANK] Квест на легендарку! Начинаю открывать яйца.")
+    needsHatch = false -- Выключаем обычный хатч
+    needsFarm = false  -- Выключаем ТП на фарм, чтобы стоять у яйца
+    print("--- [RANK] Квест на легендарку! Работает спец-скрипт.")
 end
                 end
             end
