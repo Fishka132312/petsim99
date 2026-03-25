@@ -1,4 +1,4 @@
-_G.AutoTap = true
+_G.AutoTap = false
 
 local RADIUS = 150
 local MAX_TARGETS = 20
