@@ -96,7 +96,7 @@ local function SmartHatch()
     local needTeleport = distance > 15
 
     if needTeleport then
-        _G.Teleportbestlocationaccept = tick() + 8
+        _G.Teleportbestlocationaccept = tick() + 3
         root.CFrame = targetPart.CFrame * CFrame.new(0, 4, 6) 
         task.wait(0.5)
     end
