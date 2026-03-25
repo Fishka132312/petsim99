@@ -1,4 +1,4 @@
-_G.AutoHatchLegendary = true
+_G.AutoHatchLegendary = false
 _G.ReturnToPosLegendary = true 
 
 local Library = game.ReplicatedStorage:WaitForChild("Library")
