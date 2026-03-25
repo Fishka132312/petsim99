@@ -1,4 +1,4 @@
-_G.AutoHatchBestEgg = false
+_G.AutoHatchBestEggForRank = false
 _G.ReturnToPos = true 
 
 local Library = game.ReplicatedStorage:WaitForChild("Library")
@@ -94,7 +94,7 @@ end
 task.spawn(function()
     print("--- СИСТЕМА AUTO-HATCH ЗАПУЩЕНА ---")
     while true do
-        if _G.AutoHatchBestEgg then
+        if _G.AutoHatchBestEggForRank then
             local ok, err = pcall(SmartHatch)
             if not ok then 
                 warn("Критическая ошибка цикла: " .. tostring(err)) 
