@@ -1,4 +1,4 @@
-_G.Autorank = true -- Сразу поставил true, чтобы работал
+_G.Autorank = false
 
 local Save = require(game.ReplicatedStorage.Library.Client.Save)
 local QuestCmds = require(game.ReplicatedStorage.Library.Client.QuestCmds)
