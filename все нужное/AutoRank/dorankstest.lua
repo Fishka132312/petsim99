@@ -124,7 +124,7 @@ end
             end
         end
 
-        updateStates(needsFarm, needsJar, needsComet, needsHatch)
+        updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow)
         
         task.wait(2)
     end
