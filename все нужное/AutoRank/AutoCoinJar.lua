@@ -1,4 +1,4 @@
-_G.CoinJarUse = true
+_G.CoinJarUse = false
 local SPAWN_DELAY = 3
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
