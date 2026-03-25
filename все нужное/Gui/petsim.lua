@@ -2,9 +2,9 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jen
 local Window = OrionLib:MakeWindow({Name = "pet sim99", HidePremium = false, SaveConfig = true, ConfigFolder = "pet sim99"})
 
 local scripts = {
-    'autotap.lua',
-    'megaspeedpets.lua',
-    'automagnet.lua',
+    'things/autotap.lua',
+    'things/megaspeedpets.lua',
+    'things/automagnet.lua',
     'things/TeleportToBestZone.lua',
     'things/AutoBuyNewZone.lua',
     'things/AutoCollectRanks.lua',
@@ -69,7 +69,7 @@ Tab:AddToggle({
         if _G.AutoFarmRaid then
             if not AutoFarmRaidLoaded then
                 AutoFarmRaidLoaded = true
-                loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Raidfarm.lua'))()
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Raid/Raidfarm.lua'))()
             end
         end
     end 
