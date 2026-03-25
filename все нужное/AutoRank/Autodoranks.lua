@@ -19,7 +19,7 @@ local function updateStates(needsFarm, needsJar, needsComet, needsHatch)
 end
 
 task.spawn(function()
-    print("Авто-ранг менеджер (v3) запущен!")
+    print("Авто-ранг менеджер (v4) запущен!")
     
     while true do
         local needsFarm = false
@@ -34,8 +34,9 @@ task.spawn(function()
                 for _, goal in pairs(data.Goals) do
                     local title = string.lower(QuestCmds.MakeTitle(goal))
                     
-                    -- 1. Квесты в лучшей зоне
-                    if string.find(title, "best area") then
+                    -- 1. Квесты в лучшей зоне (Best Area или Алмазы)
+                    -- Алмазы почти всегда эффективнее бить в лучшей зоне
+                    if string.find(title, "best area") or string.find(title, "diamonds") then
                         needsFarm = true
                     end
                     
@@ -51,7 +52,7 @@ task.spawn(function()
                         needsFarm = true
                     end
 
-                    -- 4. Квесты на открытие ЛУЧШИХ яиц (Hatch best egg)
+                    -- 4. Квесты на открытие ЛУЧШИХ яиц
                     if string.find(title, "hatch") and string.find(title, "best egg") then
                         needsHatch = true
                     end
