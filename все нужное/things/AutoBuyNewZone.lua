@@ -5,8 +5,6 @@ task.spawn(function()
     local ZonesUtil = require(game.ReplicatedStorage.Library.Util.ZonesUtil)
     local Network = require(game.ReplicatedStorage.Library.Client.Network)
 
-    print("Скрипт загружен. Ожидание включения (AutoBuyEnabled = true)...")
-
     while true do
         if _G.AutoBuyEnabled == true then
             local _, maxZoneData = ZoneCmds.GetMaxOwnedZone()
@@ -17,8 +15,7 @@ task.spawn(function()
                 if nextZoneData and nextZoneData.ZoneName then
                     local success = Network.Invoke("Zones_RequestPurchase", nextZoneData.ZoneName)
                     if success then
-                        print("Успешно куплена зона: " .. nextZoneData.ZoneName)
-                    end
+                        end
                 end
             end
         end
