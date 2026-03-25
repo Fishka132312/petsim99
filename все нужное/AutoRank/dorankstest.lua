@@ -4,7 +4,7 @@ _G.IsDoingJarQuest = false
 local Save = require(game.ReplicatedStorage.Library.Client.Save)
 local QuestCmds = require(game.ReplicatedStorage.Library.Client.QuestCmds)
 
-local function updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow)
+local function updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow, needsLegendary)
     -- Фарм и передвижение
     _G.AutoSpeedPetsForRank = _G.Autorank
     _G.AutoMagnetForRank = _G.Autorank
@@ -17,6 +17,7 @@ local function updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGo
     
     -- Открытие яиц и Крафт
     _G.AutoHatchBestEggForRank = needsHatch
+    _G.AutoHatchLegendary = needsLegendary
     _G.CraftPetsGold = needsGold
     _G.CraftPetsRainbow = needsRainbow
 end
@@ -31,8 +32,7 @@ task.spawn(function()
         local needsHatch = false
         local needsGold = false
         local needsRainbow = false
-        local needsGold = false
-        local needsRainbow = false
+        local needsLegendary = false
         _G.IsDoingJarQuest = false
 
         if _G.Autorank then
@@ -131,7 +131,6 @@ if string.find(title, "use") and string.find(title, "flag") then
 end
 
 -- 7. КРАФТ (Золотые и Радужные)
-                   -- 7. КРАФТ (Золотые и Радужные)
 local isMakeQuest = string.find(title, "make")
 if isMakeQuest then
     -- Проверяем на Радужных (Rainbow)
@@ -158,11 +157,18 @@ if isMakeQuest then
         end
     end
 end
+
+-- 8. Квест на Легендарных питомцев (Hatch a Legendary)
+if string.find(title, "hatch") and (string.find(title, "legendary") or string.find(title, "above")) then
+    needsLegendary = true
+    needsHatch = true -- Включаем открытие яиц, чтобы выбить легу
+    print("--- [RANK] Квест на легендарку! Начинаю открывать яйца.")
+end
                 end
             end
         end
 
-        updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow)
+        updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow, needsLegendary)
         
         task.wait(2)
     end
