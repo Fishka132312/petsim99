@@ -1,15 +1,43 @@
 _G.CoinJarUse = false
+local SPAWN_DELAY = 3
 
-local network = game:GetService("ReplicatedStorage"):WaitForChild("Network")
-local coinjar = network:WaitForChild("CoinJar_Spawn")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Library = ReplicatedStorage:WaitForChild("Library")
+local SaveModule = require(Library.Client.Save)
+local Network = require(Library.Client.Network)
 
-local args = { "9cb80a1d395d48f8b9d2542752142e89" }
-
-while true do
-    if _G.CoinJarUse then
-        coinjar:InvokeServer(unpack(args))
-        task.wait(1)
-    else
-        task.wait(0.1)
+local function getAvailableJarUID()
+    local playerData = SaveModule.Get()
+    if playerData and playerData.Inventory and playerData.Inventory.Misc then
+        for uid, item in pairs(playerData.Inventory.Misc) do
+            if string.find(item.id, "Coin Jar") then
+                return uid
+            end
+        end
     end
+    return nil
 end
+
+task.spawn(function()
+    print("Авто-спавн банок запущен!")
+    
+    while true do
+        if _G.CoinJarUse then
+            local jarUID = getAvailableJarUID()
+            
+            if jarUID then
+                local success, ray = Network.Invoke("CoinJar_Spawn", jarUID)
+                
+                if success then
+                    print("Успешно заспавнили банку! UID: " .. jarUID)
+                else
+                    print("Сервер отклонил спавн (возможно, лимит или кулдаун)")
+                end
+            else
+                warn("Банки закончились в инвентаре!")
+            end
+        end
+        
+        task.wait(SPAWN_DELAY)
+    end
+end)
