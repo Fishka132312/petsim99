@@ -107,19 +107,33 @@ if string.find(title, "use") and string.find(title, "flag") then
 end
 
 -- 7. КРАФТ (Золотые и Радужные)
-                    local isMakeQuest = string.find(title, "make")
-                    if isMakeQuest then
-                        if string.find(title, "rainbow") then
-                            needsRainbow = true
-                            needsGold = true -- Включаем и голд, чтобы было из чего делать радужных
-                            needsHatch = true -- Идем к яйцам за материалом
-                            print("--- [RANK] Квест на Rainbow петов!")
-                        elseif string.find(title, "gold") or string.find(title, "golden") then
-                            needsGold = true
-                            needsHatch = true -- Идем к яйцам
-                            print("--- [RANK] Квест на Golden петов!")
-                        end
-                    end
+                   -- 7. КРАФТ (Золотые и Радужные)
+local isMakeQuest = string.find(title, "make")
+if isMakeQuest then
+    -- Проверяем на Радужных (Rainbow)
+    if string.find(title, "rainbow") then
+        needsRainbow = true
+        needsGold = true   -- Обязательно для материала
+        needsHatch = true  -- Бежим к яйцам
+        
+        if string.find(title, "make a ") then
+            print("--- [RANK] Финальный рывок: Крафтим последнего Rainbow пета!")
+        else
+            print("--- [RANK] Активен квест на Rainbow петов!")
+        end
+
+    -- Проверяем на Золотых (Gold/Golden)
+    elseif string.find(title, "gold") or string.find(title, "golden") then
+        needsGold = true
+        needsHatch = true  -- Бежим к яйцам
+        
+        if string.find(title, "make a ") then
+            print("--- [RANK] Финальный рывок: Крафтим последнего Gold пета!")
+        else
+            print("--- [RANK] Активен квест на Gold петов!")
+        end
+    end
+end
                 end
             end
         end
