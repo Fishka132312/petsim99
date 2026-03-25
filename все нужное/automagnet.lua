@@ -1,4 +1,4 @@
-_G.AutoMagnet = true
+_G.AutoMagnet = false
 
 task.spawn(function()
     while true do
