@@ -7,7 +7,7 @@ local function updateStates(needsFarm, needsJar, needsComet, needsHatch)
     -- Фарм и передвижение
     _G.AutoSpeedPetsForRank = needsFarm
     _G.AutoMagnetForRank = needsFarm
-    _G.AutoTeleportbestlocation = needsFarm
+    _G.AutoTeleportbestlocationForRank = needsFarm
     _G.AutoTapForRank = needsFarm
     
     -- Использование предметов
@@ -40,7 +40,7 @@ task.spawn(function()
                     if current >= target then continue end
 
                     -- 1. Квесты на фарм (зона / алмазы)
-                    if string.find(title, "best area") or string.find(title, "diamonds") then
+                    if string.find(title, "best area") or string.find(title, "Diamonds") then
                         needsFarm = true
                     end
                     
