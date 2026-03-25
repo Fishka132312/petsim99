@@ -7,35 +7,24 @@ local EggCmds = require(Library.Client.EggCmds)
 local Directory = require(Library.Directory)
 local Variables = require(Library.Variables)
 
--- Проверка анимации
 local function IsHatching()
     if Variables.OpeningEgg and Variables.OpeningEgg > 0 then return true end
     local playerGui = game.Players.LocalPlayer:FindFirstChild("PlayerGui")
-    return playerGui and (playerGui:FindFirstChild("EggOpen") or playerGui:FindFirstChild("EggSkip"))
+    if playerGui and (playerGui:FindFirstChild("EggOpen") or playerGui:FindFirstChild("EggSkip")) then return true end
+    return false
 end
 
--- Функция массовой разблокировки всех яиц
-local function UnlockAllAvailableEggs()
-    for eggId, info in pairs(Directory.Eggs) do
-        -- Пробуем разблокировать каждое яйцо по очереди
-        task.spawn(function()
-            pcall(function()
-                game:GetService("ReplicatedStorage").Network.Eggs_RequestUnlock:InvokeServer(eggId)
-            end)
-        end)
-    end
-end
-
--- Поиск самого лучшего яйца по номеру (из тех, что есть в списке)
-local function GetBestEggId()
+local function GetBestEgg()
     local bestId = nil
     local maxNum = -1
+    
     for id, info in pairs(Directory.Eggs) do
-        if info.eggNumber and info.eggNumber > maxNum then
-            -- Проверяем, не заблокировано ли оно (после нашего Unlock)
+        if info and info.eggNumber and type(info.eggNumber) == "number" then
             if not EggCmds.IsEggLocked(id) then
-                maxNum = info.eggNumber
-                bestId = id
+                if info.eggNumber > maxNum then
+                    maxNum = info.eggNumber
+                    bestId = id
+                end
             end
         end
     end
@@ -45,28 +34,31 @@ end
 local function SmartHatch()
     if IsHatching() then return end
 
-    -- 1. Сначала пытаемся «прожать» анлок на всё подряд
-    UnlockAllAvailableEggs()
-    task.wait(0.1) -- Короткая пауза для обработки
-
-    -- 2. Выбираем лучшее из разблокированных
-    local eggId, eggNum = GetBestEggId()
-    if not eggId then return end
-
     local player = game.Players.LocalPlayer
-    local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
     if not root then return end
 
-    -- 3. Поиск модели для телепорта
+    local oldPos = root.CFrame
+    local eggId, eggNum = GetBestEgg()
+    if not eggId then return end
+
     local eggModel = nil
-    local things = workspace:FindFirstChild("__THINGS")
+    local things = game.Workspace:FindFirstChild("__THINGS")
+    
     if things then
-        for _, folderName in pairs({"Eggs", "ZoneEggs", "RenderedEggs"}) do
-            local folder = things:FindFirstChild(folderName)
+        local foldersToSearch = {
+            things:FindFirstChild("Eggs"),
+            things:FindFirstChild("ZoneEggs"),
+            things:FindFirstChild("RenderedEggs")
+        }
+
+        for _, folder in pairs(foldersToSearch) do
             if folder then
-                for _, v in pairs(folder:GetChildren()) do
-                    if v.Name:match("^" .. tonumber(eggNum)) or v.Name == tostring(eggNum) then
-                        eggModel = v; break
+                for _, v in pairs(folder:GetDescendants()) do
+                    if v:IsA("Model") and (v.Name:match("^" .. tonumber(eggNum)) or v.Name == tostring(eggNum)) then
+                        eggModel = v
+                        break
                     end
                 end
             end
@@ -76,33 +68,38 @@ local function SmartHatch()
 
     if not eggModel then return end
 
-    local targetPart = eggModel.PrimaryPart or eggModel:FindFirstChild("Center") or eggModel:FindFirstChildWhichIsA("BasePart")
+    local targetPart = eggModel.PrimaryPart or eggModel:FindFirstChild("Center") or eggModel:FindFirstChild("Tier") or eggModel:FindFirstChildWhichIsA("BasePart")
     if not targetPart then return end
 
-    local oldPos = root.CFrame
     local distance = (root.Position - targetPart.Position).Magnitude
     local needTeleport = distance > 20
 
     if needTeleport then
+        _G.Teleportbestlocationaccept = tick() + 8
         root.CFrame = targetPart.CFrame * CFrame.new(0, 5, 0)
-        task.wait(0.3)
+        task.wait(0.2)
     end
 
-    -- 4. Покупка
     local success, err = Network.Invoke("Eggs_RequestPurchase", eggId, EggCmds.GetMaxHatch())
     
     if _G.ReturnToPos and needTeleport then
         root.CFrame = oldPos
     end
+
+    if not success and err then
+        warn("Ошибка покупки: " .. tostring(err))
+    end
 end
 
--- Цикл
 task.spawn(function()
-    print("--- СИСТЕМА TOTAL UNLOCK + AUTO HATCH ЗАПУЩЕНА ---")
+    print("--- СИСТЕМА AUTO-HATCH ЗАПУЩЕНА ---")
     while true do
         if _G.AutoHatchBestEggForRank then
-            pcall(SmartHatch)
+            local ok, err = pcall(SmartHatch)
+            if not ok then 
+                warn("Критическая ошибка цикла: " .. tostring(err)) 
+            end
         end
-        task.wait(0.8)
+        task.wait(0.5)
     end
 end)
