@@ -5,10 +5,10 @@ local QuestCmds = require(game.ReplicatedStorage.Library.Client.QuestCmds)
 
 local function updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow)
     -- Фарм и передвижение
-    _G.AutoSpeedPetsForRank = needsFarm
-    _G.AutoMagnetForRank = needsFarm
+    _G.AutoSpeedPetsForRank = _G.Autorank
+    _G.AutoMagnetForRank = _G.Autorank
     _G.AutoTeleportbestlocationForRank = needsFarm
-    _G.AutoTapForRank = needsFarm
+    _G.AutoTapForRank = _G.Autorank
     
     -- Использование предметов
     _G.CoinJarUse = needsJar
