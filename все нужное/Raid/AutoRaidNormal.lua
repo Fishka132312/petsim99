@@ -11,7 +11,9 @@ if not getgenv().LuckyRaidSettings then
             LeprechaunChest = true,
             Tier1000Chest = true
         },
-        TweenSpeed = 50 -- Скорость перемещения (чем выше, тем быстрее)
+        TweenSpeed = 50,
+		LegitMode = true,
+        Noclip = true -- ДОБАВИТЬ ЭТУ СТРОКУ
     }
 end
 
@@ -21,6 +23,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 local things = workspace:WaitForChild("__THINGS")
@@ -96,6 +99,19 @@ task.spawn(function()
             end
         end
     end
+end)
+
+-- Функция для работы Ноуклипа
+task.spawn(function()
+    game:GetService("RunService").Stepped:Connect(function()
+        if getgenv().LuckyRaidSettings.Noclip and player.Character then
+            for _, part in pairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") and part.CanCollide then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end)
 end)
 
 print("🚀 Скрипт запущен. Твин-телепорт активирован.")
