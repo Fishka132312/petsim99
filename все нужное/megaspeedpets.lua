@@ -1,4 +1,4 @@
-_G.AutoSpeedPets = true
+_G.AutoSpeedPets = false
 
 
 local Network = game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Breakables_JoinPetBulk")
