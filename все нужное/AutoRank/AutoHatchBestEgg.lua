@@ -1,4 +1,4 @@
-_G.AutoHatchBestEggForRank = true
+_G.AutoHatchBestEggForRank = false
 _G.ReturnToPos = true 
 
 local Library = game.ReplicatedStorage:WaitForChild("Library")
