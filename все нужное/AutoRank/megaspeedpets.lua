@@ -47,7 +47,7 @@ end
 
 task.spawn(function()
     while true do
-        if _G.AutoSpeedPets then 
+        if _G.AutoSpeedPetsForRank then 
             local targets = getTargetsInRange(60)
             local attackData = {}
 
