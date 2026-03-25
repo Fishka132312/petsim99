@@ -28,6 +28,10 @@ task.spawn(function()
         local needsJar = false
         local needsComet = false
         local needsHatch = false
+        local needsGold = false
+        local needsRainbow = false
+        local needsGold = false
+        local needsRainbow = false
 
         if _G.Autorank then
             local data = Save.Get()
@@ -47,13 +51,17 @@ task.spawn(function()
                     end
                     
                     -- 2. Квесты на Coin Jar
-                    if string.find(title, "coin jar") then
-                        needsJar = true
-                        needsFarm = true
-                        if string.find(title, "use a") or string.find(title, "use %d+") then
-                            print("--- [RANK] Активен квест на Coin Jar: " .. title)
-                        end
-                    end
+if string.find(title, "coin jar") then
+    needsJar = true
+    -- Добавляем проверку: если в квесте про джары просят "best area", включаем фарм/тп
+    if string.find(title, "best area") then
+        needsFarm = true
+    end
+    
+    if string.find(title, "use a") or string.find(title, "use %d+") or string.find(title, "break") then
+        print("--- [RANK] Активен квест на Coin Jar: " .. title)
+    end
+end
 
                     -- 3. Квесты на Кометы
                     if string.find(title, "comet") then
