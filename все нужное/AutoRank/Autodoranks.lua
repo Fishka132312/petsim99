@@ -67,7 +67,6 @@ task.spawn(function()
                         needsHatch = true
                     end
 
-					-- 5. Квесты на использование зелий (Use X Tier Y Potions)
 -- 5. Квесты на зелья (Понимает цифры 1-9, римские i-vi и артикль "a")
 if string.find(title, "use") and string.find(title, "potion") and string.find(title, "tier") then
     -- 1. Пытаемся вытащить римские цифры или обычные (ищем всё, что после слова tier)
@@ -85,6 +84,23 @@ if string.find(title, "use") and string.find(title, "potion") and string.find(ti
         print("--- [RANK] Нашел квест на зелья! Тир: " .. tostring(tierNumber))
     else
         print("--- [RANK] Вижу квест, но не понял Тир из текста: " .. title)
+    end
+end
+
+						-- 6. Квесты на флаги (Use X Flags)
+if string.find(title, "use") and string.find(title, "flag") then
+    -- Ищем число в тексте квеста (например, "10" из "use 10 flags")
+    local amount = title:match("(%d+)")
+    
+    if amount then
+        _G.UseFlag = tonumber(amount)
+        needsFarm = true -- Это включит телепорт и фарм через updateStates
+        print("--- [RANK] Квест на флаги! Нужно использовать: " .. amount)
+    else
+        -- Если число не найдено (например, "use a flag"), ставим 1 по умолчанию
+        _G.UseFlag = 1
+        needsFarm = true
+        print("--- [RANK] Квест на флаг (единичный)")
     end
 end
                 end
