@@ -48,20 +48,19 @@ task.spawn(function()
                     if string.find(title, "coin jar") then
                         needsJar = true
                         needsFarm = true
+                        if string.find(title, "use a") or string.find(title, "use %d+") then
+                            print("--- [RANK] Активен квест на Coin Jar: " .. title)
+                        end
                     end
 
                     -- 3. Квесты на Кометы
                     if string.find(title, "comet") then
                         needsComet = true
                         needsFarm = true
+                        if string.find(title, "use a") or string.find(title, "use %d+") then
+                            print("--- [RANK] Активен квест на Кометы: " .. title)
+                        end
                     end
-
-					if string.find(title, "use") and string.find(title, "potions") and string.find(title, "tier") then
-    local tier = title:match("tier%s+(%d+)")
-    if tier then
-        _G.PotionToUse = tonumber(tier)
-    end
-end
 
                     -- 4. Квесты на открытие лучших яиц
                     if string.find(title, "hatch") and string.find(title, "best egg") then
@@ -69,12 +68,23 @@ end
                     end
 
 					-- 5. Квесты на использование зелий (Use X Tier Y Potions)
-if string.find(title, "use") and string.find(title, "potions") and string.find(title, "tier") then
-    -- Вытаскиваем число после слова "tier"
-    local tier = title:match("tier%s+(%d+)")
-    if tier then
-        _G.PotionToUse = tonumber(tier)
-        _G.AutoUsePotionsForRank = true -- Доп. флаг, если твой основной чит его требует
+-- 5. Квесты на зелья (Понимает цифры 1-9, римские i-vi и артикль "a")
+if string.find(title, "use") and string.find(title, "potion") and string.find(title, "tier") then
+    -- 1. Пытаемся вытащить римские цифры или обычные (ищем всё, что после слова tier)
+    local rawTier = title:match("tier%s+([%w%.]+)")
+    
+    -- 2. Таблица для перевода римских в обычные
+    local romanMap = {i = 1, ii = 2, iii = 3, iv = 4, v = 5, vi = 6}
+    
+    -- 3. Определяем итоговое число тира
+    local tierNumber = tonumber(rawTier) or romanMap[rawTier]
+
+    if tierNumber then
+        _G.PotionToUse = tierNumber
+        _G.AutoUsePotionsForRank = true
+        print("--- [RANK] Нашел квест на зелья! Тир: " .. tostring(tierNumber))
+    else
+        print("--- [RANK] Вижу квест, но не понял Тир из текста: " .. title)
     end
 end
                 end
