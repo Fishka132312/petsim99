@@ -1,4 +1,4 @@
-_G.CoinJarUse = false
+_G.CoinJarUse = true
 local SPAWN_DELAY = 3
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -10,7 +10,7 @@ local function getAvailableJarUID()
     local playerData = SaveModule.Get()
     if playerData and playerData.Inventory and playerData.Inventory.Misc then
         for uid, item in pairs(playerData.Inventory.Misc) do
-            if string.find(item.id, "Coin Jar") then
+            if string.find(item.id, "Coin Jar") and not string.find(item.id, "Giant") then
                 return uid
             end
         end
