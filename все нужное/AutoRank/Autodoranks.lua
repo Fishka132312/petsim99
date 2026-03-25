@@ -1,21 +1,24 @@
 _G.Autorank = false
+_G.IsDoingJarQuest = false
 
 local Save = require(game.ReplicatedStorage.Library.Client.Save)
 local QuestCmds = require(game.ReplicatedStorage.Library.Client.QuestCmds)
 
-local function updateStates(needsFarm, needsJar, needsComet, needsHatch)
+local function updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow)
     -- Фарм и передвижение
-    _G.AutoSpeedPetsForRank = needsFarm
-    _G.AutoMagnetForRank = needsFarm
+    _G.AutoSpeedPetsForRank = _G.Autorank
+    _G.AutoMagnetForRank = _G.Autorank
     _G.AutoTeleportbestlocationForRank = needsFarm
-    _G.AutoTapForRank = needsFarm
+    _G.AutoTapForRank = _G.Autorank
     
     -- Использование предметов
     _G.CoinJarUse = needsJar
     _G.CometUse = needsComet
     
-    -- Открытие яиц
+    -- Открытие яиц и Крафт
     _G.AutoHatchBestEggForRank = needsHatch
+    _G.CraftPetsGold = needsGold
+    _G.CraftPetsRainbow = needsRainbow
 end
 
 task.spawn(function()
@@ -26,6 +29,11 @@ task.spawn(function()
         local needsJar = false
         local needsComet = false
         local needsHatch = false
+        local needsGold = false
+        local needsRainbow = false
+        local needsGold = false
+        local needsRainbow = false
+        _G.IsDoingJarQuest = false
 
         if _G.Autorank then
             local data = Save.Get()
@@ -39,19 +47,37 @@ task.spawn(function()
                     local target = goal.Amount or 1
                     if current >= target then continue end
 
-                    -- 1. Квесты на фарм (зона / алмазы)
-                    if string.find(title, "best area") or string.find(title, "Diamonds") then
-                        needsFarm = true
-                    end
-                    
+                    -- 1. Квесты на фарм (зона / алмазы / ломание объектов)
+local isDiamondQuest = string.find(title, "diamond") -- Убрал "s", теперь ловит и diamond, и diamonds
+local isBreakQuest = string.find(title, "break")
+local isEarnQuest = string.find(title, "earn") or string.find(title, "collect")
+
+-- Проверяем: если в названии есть "diamond" ИЛИ "best area"
+if isDiamondQuest or string.find(title, "best area") then
+    needsFarm = true -- Это заставит скрипт телепортироваться в лучшую локацию
+    
+    if isDiamondQuest then
+        if isBreakQuest then
+            print("--- [RANK] Квест на алмазные объекты обнаружен! ТП в лучшую зону.")
+        elseif isEarnQuest then
+            print("--- [RANK] Квест на сбор алмазов обнаружен! ТП в лучшую зону.")
+        end
+    end
+end
+
                     -- 2. Квесты на Coin Jar
-                    if string.find(title, "coin jar") then
-                        needsJar = true
-                        needsFarm = true
-                        if string.find(title, "use a") or string.find(title, "use %d+") then
-                            print("--- [RANK] Активен квест на Coin Jar: " .. title)
-                        end
-                    end
+if string.find(title, "coin jar") then
+    needsJar = true
+    _G.IsDoingJarQuest = true
+    -- Добавляем проверку: если в квесте про джары просят "best area", включаем фарм/тп
+    if string.find(title, "best area") then
+        needsFarm = true
+    end
+    
+    if string.find(title, "use a") or string.find(title, "use %d+") or string.find(title, "break") then
+        print("--- [RANK] Активен квест на Coin Jar: " .. title)
+    end
+end
 
                     -- 3. Квесты на Кометы
                     if string.find(title, "comet") then
@@ -103,11 +129,40 @@ if string.find(title, "use") and string.find(title, "flag") then
         print("--- [RANK] Квест на флаг (единичный)")
     end
 end
+
+-- 7. КРАФТ (Золотые и Радужные)
+                   -- 7. КРАФТ (Золотые и Радужные)
+local isMakeQuest = string.find(title, "make")
+if isMakeQuest then
+    -- Проверяем на Радужных (Rainbow)
+    if string.find(title, "rainbow") then
+        needsRainbow = true
+        needsGold = true   -- Обязательно для материала
+        needsHatch = true  -- Бежим к яйцам
+        
+        if string.find(title, "make a ") then
+            print("--- [RANK] Финальный рывок: Крафтим последнего Rainbow пета!")
+        else
+            print("--- [RANK] Активен квест на Rainbow петов!")
+        end
+
+    -- Проверяем на Золотых (Gold/Golden)
+    elseif string.find(title, "gold") or string.find(title, "golden") then
+        needsGold = true
+        needsHatch = true  -- Бежим к яйцам
+        
+        if string.find(title, "make a ") then
+            print("--- [RANK] Финальный рывок: Крафтим последнего Gold пета!")
+        else
+            print("--- [RANK] Активен квест на Gold петов!")
+        end
+    end
+end
                 end
             end
         end
 
-        updateStates(needsFarm, needsJar, needsComet, needsHatch)
+        updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow)
         
         task.wait(2)
     end
