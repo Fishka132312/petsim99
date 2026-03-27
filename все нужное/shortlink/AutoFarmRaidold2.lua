@@ -120,7 +120,7 @@ end
 
 for _, scriptName in ipairs(rootScripts) do
     task.spawn(function()
-        local fullPath = baseUrl .. scriptName
+        local fullPath = baseUrl .. "things/" .. scriptName
         pcall(function() loadstring(game:HttpGet(fullPath))() end)
     end)
     task.wait(0.2)
