@@ -24,8 +24,9 @@ local scripts = {
     'AutoRank/UnlockEggs.lua',
     'AutoRank/AutoFlag.lua',
     'AutoRank/AutoCraftPets.lua',
-    'autoraidupgrades.lua',
-    'AutoHatchLegendary.lua',
+    'Raid/autoraidupgrades.lua',
+    'AutoRank/AutoHatchLegendary.lua',
+	'things/AutoMail.lua',
 }
 
 local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/'
@@ -280,6 +281,51 @@ Tab:AddToggle({
     end    
 })
 
+for _, scriptPath in ipairs(scripts) do
+    task.spawn(function()
+        local success, err = pcall(function()
+            loadstring(game:HttpGet(baseUrl .. scriptPath))()
+        end)
+        if not success then
+            warn("Ошибка загрузки скрипта " .. scriptPath .. ": " .. err)
+        end
+    end)
+end
+
+
+--------------------------------Main-----------------------------
+
+local Tab = Window:MakeTab({
+	Name = "Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Auto Rank"
+})
+
+local Toggle = Tab:AddToggle({
+    Name = "Auto Rank (BETA)",
+    Default = false,
+    Callback = function(Value)
+        _G.Autorank = Value
+        print("Auto Rank статус:", Value)
+    end
+})
+
+local Section = Tab:AddSection({
+	Name = "Auto Collect"
+})
+
+Tab:AddToggle({
+    Name = "Auto Claim Mail",
+    Default = false,
+    Callback = function(Value)
+       _G.ClaimMail = Value
+    end    
+})
+
 Tab:AddToggle({
     Name = "Auto Claim Ranks",
     Default = false,
@@ -302,33 +348,7 @@ Tab:AddButton({
       	loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/things/AutoCollectRelic.lua'))()
   	end    
 })
-
-local Section = Tab:AddSection({
-	Name = "Auto Rank"
-})
-
-local Toggle = Tab:AddToggle({
-    Name = "Auto Rank (BETA)",
-    Default = false,
-    Callback = function(Value)
-        _G.Autorank = Value
-        print("Auto Rank статус:", Value)
-    end
-})
-
-
-
-for _, scriptPath in ipairs(scripts) do
-    task.spawn(function()
-        local success, err = pcall(function()
-            loadstring(game:HttpGet(baseUrl .. scriptPath))()
-        end)
-        if not success then
-            warn("Ошибка загрузки скрипта " .. scriptPath .. ": " .. err)
-        end
-    end)
-end
-
+ 
 
 --------------------------------Eggs-----------------------------
 
@@ -461,7 +481,7 @@ Tab:AddTextbox({
         end
     end    
 })
- 
+
 --------------------------------MISC-----------------------------
 
 local Tab = Window:MakeTab({
