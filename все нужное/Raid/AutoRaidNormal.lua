@@ -13,11 +13,11 @@ if not getgenv().LuckyRaidSettings then
         },
         TweenSpeed = 50,
 		LegitMode = true,
-        Noclip = true -- ДОБАВИТЬ ЭТУ СТРОКУ
+        Noclip = true
     }
 end
 
-_G.AutoFarmRaid = true 
+_G.AutoFarmRaid = false
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
