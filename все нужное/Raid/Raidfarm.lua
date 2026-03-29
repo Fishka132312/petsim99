@@ -54,7 +54,6 @@ local function getBreakable()
 end
 
 local function forceBuy(bossId, roomNum)
-    print("🛒 Покупка/Рычаг: Босс #" .. bossId .. " (Комната " .. roomNum .. ")")
     for i = 1, 3 do
     pcall(function()
         Net.LuckyRaid_PullLever:InvokeServer(bossId)
@@ -80,7 +79,6 @@ task.spawn(function()
     end
 end)
 
-print("🚀 Скрипт запущен. Фикс рычага в FinalArea добавлен.")
 
 while task.wait(0.5) do
     if _G.AutoFarmRaid then
@@ -125,7 +123,6 @@ while task.wait(0.5) do
 
             if not getBreakable() then
                 if boss2Purchased and lastBossRoom < 9 then
-                    print("⏳ Пусто после 2-го босса. Проверка финала...")
                     task.wait(3)
                     
                     if not getBreakable() then
@@ -146,7 +143,6 @@ while task.wait(0.5) do
                                 task.wait(0.3)
                             end
                             
-                            print("✅ Рычаг №3 и активация выполнены!")
                             lastBossRoom = 9 
                         end
                     end
