@@ -110,7 +110,6 @@ local function SmartHatch()
 
     if not success then
         local errorMsg = tostring(err)
-        print("Пауза 5 сек. Причина: " .. errorMsg)
         
         if _G.ReturnToPos then
             root.CFrame = oldPos
@@ -121,7 +120,6 @@ local function SmartHatch()
 end
 
 task.spawn(function()
-    print("--- СИСТЕМА SMART-HATCH ЗАПУЩЕНА ---")
     while true do
         if _G.AutoHatchBestEgg then
             local ok, err = pcall(SmartHatch)
