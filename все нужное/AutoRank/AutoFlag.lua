@@ -27,8 +27,6 @@ local function useFlags(amount)
     if #flagsInInventory > 0 then
         local randomSelection = flagsInInventory[math.random(1, #flagsInInventory)]
         
-        print("Запуск активации: " .. tostring(randomSelection.id) .. " в количестве " .. amount)
-
         for i = 1, amount do
             task.spawn(function()
                 local success, err = pcall(function()
@@ -47,7 +45,6 @@ local function useFlags(amount)
 end
 
 task.spawn(function()
-    print("Скрипт запущен и ожидает переменную _G.UseFlag")
     while true do
         if type(_G.UseFlag) == "number" and _G.UseFlag > 0 then
             local count = _G.UseFlag
