@@ -28,6 +28,7 @@ local scripts = {
     'AutoHatchLegendary.lua',
 	'Raid/AutoRaidEbatLegit.lua',
 	'Raid/Raidfarm.lua',
+	'Antilag/Antilag33.lua',
 	
 }
 
