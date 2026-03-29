@@ -29,7 +29,6 @@ local function updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGo
 end
 
 task.spawn(function()
-    print("Авто-ранг менеджер (Light) запущен!")
     
     while true do
         local needsFarm = false
@@ -65,9 +64,7 @@ if isDiamondQuest or string.find(title, "best area") then
     
     if isDiamondQuest then
         if isBreakQuest then
-            print("--- [RANK] Квест на алмазные объекты обнаружен! ТП в лучшую зону.")
         elseif isEarnQuest then
-            print("--- [RANK] Квест на сбор алмазов обнаружен! ТП в лучшую зону.")
         end
     end
 end
