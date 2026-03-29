@@ -21,7 +21,7 @@ local RaidInstance = require(Library.Client.RaidCmds.ClientRaidInstance)
 local things = workspace:WaitForChild("__THINGS")
 local breakables = things:WaitForChild("Breakables")
 
-_G.AutoFarmRaid = true
+_G.AutoFarmRaidLegit = true
 local activatedBosses = {}
 
 -- === УМНАЯ СИСТЕМА ПЕРЕДВИЖЕНИЯ (PATHFINDING) ===
@@ -56,7 +56,7 @@ local function tweenTo(targetCFrame)
     if waypoints then
         -- Идем по точкам маршрута
         for i, waypoint in ipairs(waypoints) do
-            if not _G.AutoFarmRaid then break end
+            if not _G.AutoFarmRaidLegit then break end
             
             -- Пропускаем первую точку (она обычно под нами)
             if i == 1 then continue end 
@@ -186,7 +186,7 @@ local function handleBoss(bossNum)
                         end
                     end
                 end
-                if not _G.AutoFarmRaid then return end -- Выход, если стопнули чит
+                if not _G.AutoFarmRaidLegit then return end -- Выход, если стопнули чит
                 task.wait(1) -- Проверяем раз в секунду, чтобы не лагало
             end
             print("✨ Зона Босса " .. bossNum .. " очищена!")
@@ -205,7 +205,7 @@ end
 
 task.spawn(function()
     while task.wait(0.5) do
-        if not _G.AutoFarmRaid then continue end
+        if not _G.AutoFarmRaidLegit then continue end
         local raid = RaidInstance.GetCurrent()
 
         if not raid then
