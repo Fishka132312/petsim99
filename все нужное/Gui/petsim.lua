@@ -1,5 +1,5 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "pet sim99", HidePremium = false, SaveConfig = true, ConfigFolder = "pet sim99"})
+local Window = OrionLib:MakeWindow({Name = "pet sim99", HidePremium = false, SaveConfig = true, ConfigFolder = "petsim99"})
 
 local scripts = {
     'things/autotap.lua',
@@ -24,9 +24,8 @@ local scripts = {
     'AutoRank/UnlockEggs.lua',
     'AutoRank/AutoFlag.lua',
     'AutoRank/AutoCraftPets.lua',
-    'Raid/autoraidupgrades.lua',
-    'AutoRank/AutoHatchLegendary.lua',
-	'things/AutoMail.lua',
+    'autoraidupgrades.lua',
+    'AutoHatchLegendary.lua',
 }
 
 local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/'
@@ -64,6 +63,8 @@ local AutoFarmRaidLoaded = false
 Tab:AddToggle({
     Name = "Lucky Raid Auto-Farm",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidAutoFarm",
     Callback = function(Value)
         _G.AutoFarmRaid = Value
         
@@ -84,6 +85,8 @@ local Section = Tab:AddSection({
 Tab:AddToggle({
     Name = "Raid Pets Slots",
     Default = false,
+	Save = true,
+    Flag = "RaidPetsSlotsUpgrage",
     Callback = function(Value)
         _G.AutoUpgradeConfig.LuckyRaidPets = Value
     end    
@@ -93,6 +96,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid Pets",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidPetsUpgrage",
     Callback = function(Value)
     _G.AutoUpgradeConfig.LuckyRaidDamage = Value
     end    
@@ -102,6 +107,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid Attack Speed",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidAttackSpeedUpgrage",
     Callback = function(Value)
      _G.AutoUpgradeConfig.LuckyRaidAttackSpeed = Value
     end    
@@ -112,6 +119,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid Pet Speed",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidPetSpeedUpgrage",
     Callback = function(Value)
        _G.AutoUpgradeConfig.LuckyRaidPetSpeed = Value
     end    
@@ -122,6 +131,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky RaidEgg Cost",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidEggCostUpgrage",
     Callback = function(Value)
        _G.AutoUpgradeConfig.LuckyRaidEggCost = Value
     end    
@@ -131,6 +142,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid More Currency",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidMoreCurrencyUpgrage",
     Callback = function(Value)
        _G.AutoUpgradeConfig.LuckyRaidMoreCurrency = Value
     end    
@@ -141,6 +154,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid XP",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidXPUpgrage",
     Callback = function(Value)
        _G.AutoUpgradeConfig.LuckyRaidXP = Value
     end    
@@ -151,6 +166,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid Better Loots",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidBetterLootsUpgrage",
     Callback = function(Value)
        _G.AutoUpgradeConfig.LuckyRaidBetterLoot = Value
     end    
@@ -161,6 +178,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid Huge Chest",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidHugeChestUpgrage",
     Callback = function(Value)
         _G.AutoUpgradeConfig.LuckyRaidHugeChest = Value
     end    
@@ -171,6 +190,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid Titanic Chest",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidTitanicChestUpgrage",
     Callback = function(Value)
        _G.AutoUpgradeConfig.LuckyRaidTitanicChest = Value
     end    
@@ -180,6 +201,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid Key Drops",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidKeyDropsUpgrage",
     Callback = function(Value)
        _G.AutoUpgradeConfig.LuckyRaidKeyDrops = Value
     end    
@@ -189,6 +212,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid Boss Huge Chances",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidBossHugeChancesUpgrage",
     Callback = function(Value)
        _G.AutoUpgradeConfig.LuckyRaidBossHugeChances = Value
     end    
@@ -197,6 +222,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Lucky Raid Boss Titanic Chances",
     Default = false,
+	Save = true,
+    Flag = "LuckyRaidBossTitanicChancesUpgrage",
     Callback = function(Value)
        _G.AutoUpgradeConfig.LuckyRaidBossTitanicChances = Value
     end    
@@ -216,12 +243,11 @@ local Section = Tab:AddSection({
 	Name = "Auto Farm"
 })
 
-
-
-
 Tab:AddToggle({
     Name = "Auto Tap",
     Default = false,
+	Save = true,
+    Flag = "AutoTap",
     Callback = function(Value)
        _G.AutoTap = Value
     end
@@ -231,6 +257,8 @@ Tab:AddToggle({
 Tab:AddToggle({
 	Name = "SpeedPets",
 	Default = false,
+	Save = true,
+    Flag = "SpeedPets",
 	Callback = function(Value)
 		_G.AutoSpeedPets = Value
 	end    
@@ -240,6 +268,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Auto Magnet",
     Default = false,
+	Save = true,
+    Flag = "AutoMagnet",
     Callback = function(Value)
         _G.AutoMagnet = Value
     end    
@@ -248,6 +278,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Auto Buy New Zones",
     Default = false,
+	Save = true,
+    Flag = "AutoBuyNewZones",
     Callback = function(Value)
         _G.AutoBuyNewZone = Value
         
@@ -276,10 +308,56 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Auto-Teleport to Best Zone",
     Default = false,
+	Save = true,
+    Flag = "AutoTeleporttoBestZone",
     Callback = function(Value)
        _G.AutoTeleportbestlocation = Value
     end    
 })
+
+Tab:AddToggle({
+    Name = "Auto Claim Ranks",
+    Default = false,
+	Save = true,
+    Flag = "AutoClaimRanks",
+    Callback = function(Value)
+        _G.AutoCollectRANK = Value
+    end    
+})
+
+Tab:AddToggle({
+    Name = "Auto Collect Free Gifts",
+    Default = false,
+	Save = true,
+    Flag = "AutoCollectFreeGifts",
+    Callback = function(Value)
+       _G.AutoCollectGifts = Value
+    end    
+})
+
+Tab:AddButton({
+	Name = "Collect all Relics",
+	Callback = function()
+      	loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/things/AutoCollectRelic.lua'))()
+  	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Auto Rank"
+})
+
+local Toggle = Tab:AddToggle({
+    Name = "Auto Rank (BETA)",
+    Default = false,
+	Save = true,
+    Flag = "AutoRank",
+    Callback = function(Value)
+        _G.Autorank = Value
+        print("Auto Rank статус:", Value)
+    end
+})
+
+
 
 for _, scriptPath in ipairs(scripts) do
     task.spawn(function()
@@ -292,63 +370,6 @@ for _, scriptPath in ipairs(scripts) do
     end)
 end
 
-
---------------------------------Main-----------------------------
-
-local Tab = Window:MakeTab({
-	Name = "Main",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
-
-local Section = Tab:AddSection({
-	Name = "Auto Rank"
-})
-
-local Toggle = Tab:AddToggle({
-    Name = "Auto Rank (BETA)",
-    Default = false,
-    Callback = function(Value)
-        _G.Autorank = Value
-        print("Auto Rank статус:", Value)
-    end
-})
-
-local Section = Tab:AddSection({
-	Name = "Auto Collect"
-})
-
-Tab:AddToggle({
-    Name = "Auto Claim Mail",
-    Default = false,
-    Callback = function(Value)
-       _G.ClaimMail = Value
-    end    
-})
-
-Tab:AddToggle({
-    Name = "Auto Claim Ranks",
-    Default = false,
-    Callback = function(Value)
-        _G.AutoCollectRANK = Value
-    end    
-})
-
-Tab:AddToggle({
-    Name = "Auto Collect Free Gifts",
-    Default = false,
-    Callback = function(Value)
-       _G.AutoCollectGifts = Value
-    end    
-})
-
-Tab:AddButton({
-	Name = "Collect all Relics",
-	Callback = function()
-      	loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/things/AutoCollectRelic.lua'))()
-  	end    
-})
- 
 
 --------------------------------Eggs-----------------------------
 
@@ -366,6 +387,8 @@ local Section = Tab:AddSection({
 Tab:AddToggle({
     Name = "Auto Hatch Best Egg",
     Default = false,
+	Save = true,
+    Flag = "AutoHatchBestEgg",
     Callback = function(Value)
         _G.AutoHatchBestEgg = Value
     end    
@@ -375,6 +398,8 @@ Tab:AddToggle({
 Tab:AddToggle({
     Name = "Auto Hatch Near Egg",
     Default = false,
+	Save = true,
+    Flag = "AutoHatchNearEgg",
     Callback = function(Value)
         _G.AutoHatchNearEgg = Value
     end    
@@ -481,7 +506,7 @@ Tab:AddTextbox({
         end
     end    
 })
-
+ 
 --------------------------------MISC-----------------------------
 
 local Tab = Window:MakeTab({
@@ -546,6 +571,8 @@ Tab:AddButton({
 Tab:AddToggle({
     Name = "Disable 3D Rendering",
     Default = false,
+	Save = true,
+    Flag = "Disable3DRendering",
     Callback = function(Value)
         if Value then
             game:GetService("RunService"):Set3dRenderingEnabled(false)
@@ -577,3 +604,5 @@ Tab:AddButton({
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Antilag/PetsOptimizer.lua'))()
     end    
 })
+
+OrionLib:Init()
