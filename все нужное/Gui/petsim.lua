@@ -300,10 +300,8 @@ Tab:AddToggle({
                         local success = game:GetService("ReplicatedStorage").Network.Zone_RequestPurchase:InvokeServer() 
                         
                         if success then
-                            print("--- [AUTO-BUY] Попытка покупки зоны успешна!")
                         end
                     else
-                        print("--- [PAUSE] Покупка зон приостановлена: активен квест на Coin Jar")
                     end
                     
                     task.wait(5)
@@ -353,7 +351,6 @@ local Toggle = Tab:AddToggle({
     Default = false,
     Callback = function(Value)
         _G.Autorank = Value
-        print("Auto Rank статус:", Value)
     end
 })
 
