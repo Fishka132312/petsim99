@@ -26,6 +26,10 @@ local scripts = {
     'AutoRank/AutoCraftPets.lua',
     'autoraidupgrades.lua',
     'AutoHatchLegendary.lua',
+	'Raid/AutoRaidEbatLegit.lua',
+	'Raid/buyboss2.lua',
+	'Raid/Raidfarm.lua',
+	
 }
 
 local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/'
@@ -66,15 +70,20 @@ Tab:AddToggle({
 	Save = true,
     Flag = "LuckyRaidAutoFarm",
     Callback = function(Value)
-        _G.AutoFarmRaid = Value
-        
-        if _G.AutoFarmRaid then
-            if not AutoFarmRaidLoaded then
-                AutoFarmRaidLoaded = true
-                loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Raid/Raidfarm.lua'))()
-            end
-        end
-    end 
+			_G.BuyBoss2 = Value
+			_G.AutoFarmRaid = Value
+    end
+})
+
+Tab:AddToggle({
+    Name = "Lucky Raid Auto-Farm Legit",
+    Default = false,
+	Save = true,
+    Flag = "LuckyRaidAutoFarmLegit",
+    Callback = function(Value)
+			_G.BuyBoss2 = Value
+			_G.AutoFarmRaidNormal = Value
+    end
 })
 
 
