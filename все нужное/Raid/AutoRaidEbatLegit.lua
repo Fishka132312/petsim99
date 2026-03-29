@@ -11,9 +11,9 @@ if not getgenv().LuckyRaidSettings then
             LeprechaunChest = true,
             Tier1000Chest = true
         },
-        TweenSpeed = 50,
+		WalkSpeed = 100,
 		LegitMode = true,
-        Noclip = true -- ДОБАВИТЬ ЭТУ СТРОКУ
+        Noclip = true
     }
 end
 
@@ -43,7 +43,6 @@ local teleportedThisRaid = false
 local lastLeave = 0
 local currentTween = nil
 
--- Функция плавного перемещения
 local function moveTo(targetPosition)
     local character = player.Character
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
@@ -81,7 +80,7 @@ end
 UserInputService.InputBegan:Connect(function(input, gpe)
     if not gpe and input.KeyCode == Enum.KeyCode.P then
         _G.AutoFarmRaid = not _G.AutoFarmRaid
-        if not _G.AutoFarmRaid and currentTween then currentTween:Cancel() end
+        if not _G.AutoFarmRaid then end
         warn(" LuckyRaid Status: " .. (_G.AutoFarmRaid and "RUNNING" or "STOPPED"))
     end
 end)
@@ -107,21 +106,18 @@ local function forceBuy(bossId, roomNum)
     if bossId == 2 then boss2Purchased = true end
 end
 
--- Основной цикл перемещения (теперь Твином)
 task.spawn(function()
     while task.wait(0.2) do
         if _G.AutoFarmRaid then
             local target = getBreakable()
             if target and target.Parent then
                 local targetPos = target:GetPivot()
-                -- Смещение чуть выше объекта, чтобы не застревать в текстурах
                 moveTo((targetPos * CFrame.new(0, 3, 0)).Position)
             end
         end
     end
 end)
 
--- Функция для работы Ноуклипа
 task.spawn(function()
     game:GetService("RunService").Stepped:Connect(function()
         if getgenv().LuckyRaidSettings.Noclip and player.Character then
@@ -134,9 +130,20 @@ task.spawn(function()
     end)
 end)
 
-print("🚀 Скрипт запущен. Твин-телепорт активирован.")
+task.spawn(function()
+    while task.wait() do
+        pcall(function()
+            if _G.AutoFarmRaid and player.Character then
+                local hum = player.Character:FindFirstChildOfClass("Humanoid")
+                if hum then
+                    hum.WalkSpeed = getgenv().LuckyRaidSettings.WalkSpeed
+                end
+            end
+        end)
+    end
+end)
 
--- Логика рейда (оставлена без изменений, исправлены только вызовы)
+
 while task.wait(0.5) do
     if _G.AutoFarmRaid then
         local raid = RaidInstance.GetCurrent()
