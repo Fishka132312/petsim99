@@ -23,11 +23,19 @@ local function optimizeObject(obj)
     end
 end
 
+local function optimizeAll()
+    if _G.OptimizeBreakables then
+        for _, b in pairs(breakablesFolder:GetChildren()) do
+            optimizeObject(b)
+        end
+    end
+end
+
 breakablesFolder.ChildAdded:Connect(function(newBreakable)
+    if not _G.OptimizeBreakables then return end
+    
     task.wait(0.2) 
     optimizeObject(newBreakable)
 end)
 
-for _, b in pairs(breakablesFolder:GetChildren()) do
-    optimizeObject(b)
-end
+optimizeAll()
