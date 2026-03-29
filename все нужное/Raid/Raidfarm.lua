@@ -14,7 +14,7 @@ if not getgenv().LuckyRaidSettings then
     }
 end
 
-_G.AutoFarmRaid = true 
+_G.AutoFarmRaid = false 
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
