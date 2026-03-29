@@ -21,7 +21,7 @@ local RaidInstance = require(Library.Client.RaidCmds.ClientRaidInstance)
 local things = workspace:WaitForChild("__THINGS")
 local breakables = things:WaitForChild("Breakables")
 
-_G.AutoFarmRaidLegit = true
+_G.AutoFarmRaidLegit = false
 local activatedBosses = {}
 
 -- === УМНАЯ СИСТЕМА ПЕРЕДВИЖЕНИЯ (PATHFINDING) ===
