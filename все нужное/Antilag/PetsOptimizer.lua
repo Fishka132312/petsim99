@@ -1,55 +1,50 @@
-_G.OptimizePets = true
+_G.OptimizePets = false
 
-local petsFolder = workspace:WaitForChild("__THINGS"):WaitForChild("Pets")
-
-local trashClasses = {
-    "SpecialMesh", "Mesh", "ParticleEmitter", "Decal", 
-    "Texture", "Trail", "Beam", "SurfaceGui", "BillboardGui",
-    "Light", "PointLight", "SpotLight", "SurfaceLight"
-}
-
-local function optimizePet(obj)
+local function killPetGraphics(obj)
     if not _G.OptimizePets then return end
+    
+    if obj:IsA("MeshPart") then
+        obj.MeshId = ""
+        obj.TextureID = ""
+    elseif obj:IsA("SpecialMesh") then
+        obj.MeshId = ""
+        obj.TextureId = ""
+    end
 
-    if obj:IsA("BasePart") or obj:IsA("MeshPart") then
-        task.defer(function()
-            if not _G.OptimizePets then return end
+    if obj:IsA("BasePart") then
+        obj.Transparency = 0.5
+        obj.Color = Color3.fromRGB(100, 100, 100)
+        obj.Material = Enum.Material.Plastic
+        obj.CastShadow = false
+        obj.CanCollide = false
+        obj.Size = Vector3.new(0.5, 0.5, 0.5)
+    end
 
-            if obj:IsA("MeshPart") then
-                obj.MeshId = ""
-                obj.TextureID = ""
-            end
-
-            obj.Color = Color3.fromRGB(120, 120, 120)
-            obj.Material = Enum.Material.Plastic
-            obj.CastShadow = false
-            obj.CanCollide = false
-            obj.Size = Vector3.new(1, 1, 1)
-
-            for _, child in ipairs(obj:GetChildren()) do
-                local isTrash = false
-                for _, className in ipairs(trashClasses) do
-                    if child:IsA(className) then
-                        isTrash = true
-                        break
-                    end
-                end
-
-                if isTrash or child.Name:find("FX") or child.Name:find("RAINBOW") then
-                    child:Destroy()
-                end
-            end
-        end)
+    if obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") or 
+       obj:IsA("Decal") or obj:IsA("Texture") or obj:IsA("BillboardGui") then
+        obj:Destroy()
     end
 end
 
-for _, desc in ipairs(petsFolder:GetDescendants()) do
-    optimizePet(desc)
+local function getPetsFolder()
+    local things = workspace:FindFirstChild("__THINGS")
+    if things and things:FindFirstChild("Pets") then
+        return things.Pets
+    elseif workspace:FindFirstChild("Pets") then
+        return workspace.Pets
+    end
+    return nil
 end
 
-petsFolder.DescendantAdded:Connect(function(newObj)
-    task.wait(0.1) -- Даем время объекту прогрузиться в workspace
-    optimizePet(newObj)
-end)
+local petsFolder = getPetsFolder()
 
-print("Оптимизация петов активна: " .. tostring(_G.OptimizePets))
+if petsFolder then
+    for _, desc in ipairs(petsFolder:GetDescendants()) do
+        killPetGraphics(desc)
+    end
+
+    petsFolder.DescendantAdded:Connect(function(newObj)
+        task.wait(0.3)
+        killPetGraphics(newObj)
+    end)
+end
