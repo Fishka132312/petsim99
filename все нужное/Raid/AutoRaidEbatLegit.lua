@@ -149,7 +149,6 @@ local function handleBoss(bossNum)
     local bossModel = raidPath and raidPath.Rooms:FindFirstChild("Boss" .. bossNum)
     
     if bossModel then
-        print("🎯 Активация Босса #" .. bossNum)
         local leverPos = bossModel.Lever:GetPivot()
         local doorPos = bossModel.Door.Interact:GetPivot()
         
@@ -171,9 +170,7 @@ local function handleBoss(bossNum)
             tweenTo(breakZone.CFrame * CFrame.new(0, 5, 0))
             
             -- === НОВАЯ ПРОВЕРКА ===
-            -- Ждем, пока в радиусе зоны есть хоть один LuckyRaid объект
-            print("⏳ Ждем уничтожения объектов в зоне Босса " .. bossNum)
-            
+            -- Ждем, пока в радиусе зоны есть хоть один LuckyRaid объект            
             local zoneCleared = false
             while not zoneCleared do
                 zoneCleared = true -- Допускаем, что чисто
@@ -189,7 +186,6 @@ local function handleBoss(bossNum)
                 if not _G.AutoFarmRaidLegit then return end -- Выход, если стопнули чит
                 task.wait(1) -- Проверяем раз в секунду, чтобы не лагало
             end
-            print("✨ Зона Босса " .. bossNum .. " очищена!")
         end
         
         -- 3. Только теперь помечаем как выполненное и идем назад к двери
@@ -269,5 +265,3 @@ task.spawn(function()
         end
     end
 end)
-
-print("✅ Система обхода стен через Pathfinding загружена!")
