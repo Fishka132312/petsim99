@@ -64,14 +64,6 @@ local Section = Tab:AddSection({
 
 local AutoFarmRaidLoaded = false
 
-local function updateBuyBoss()
-    if _G.AutoFarmRaid or _G.AutoFarmRaidNormal then
-        _G.BuyBoss2 = true
-    else
-        _G.BuyBoss2 = false
-    end
-end
-
 Tab:AddToggle({
     Name = "Lucky Raid Auto-Farm",
     Default = false,
@@ -79,7 +71,7 @@ Tab:AddToggle({
     Flag = "LuckyRaidAutoFarm",
     Callback = function(Value)
         _G.AutoFarmRaid = Value
-        updateBuyBoss()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Raid/buyboss2.lua'))()
     end
 })
 
@@ -90,7 +82,7 @@ Tab:AddToggle({
     Flag = "LuckyRaidAutoFarmLegit",
     Callback = function(Value)
         _G.AutoFarmRaidNormal = Value
-        updateBuyBoss()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Raid/buyboss2.lua'))()
     end
 })
 
