@@ -108,24 +108,9 @@ local function collectWithClick()
         
         workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, targetPos)
         
-        task.wait(0)
-
-        local targetModel = nil
-        for _, obj in pairs(relicFolder:GetChildren()) do
-            if (obj:IsA("Model") or obj:IsA("BasePart")) then
-                if (obj:GetPivot().Position - targetPos).Magnitude < 5 then
-                    targetModel = obj
-                    break
-                end
-            end
-        end
-
-        if targetModel then
-            local cd = targetModel:FindFirstChildWhichIsA("ClickDetector", true)
-            if cd then
-                fireclickdetector(cd)
-            end
-        end
+        -- Вот исправленная часть:
+        task.wait(0.1) 
+        Network:WaitForChild("Relic_Found"):InvokeServer(id)
 
         task.wait(WAIT_TIME)
     end
