@@ -1,4 +1,4 @@
-_G.OptimizeBreakables = false
+_G.OptimizeBreakables = true
 
 local breakablesFolder = workspace:WaitForChild("__THINGS"):WaitForChild("Breakables")
 
