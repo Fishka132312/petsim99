@@ -17,7 +17,7 @@ if not getgenv().LuckyRaidSettings then
     }
 end
 
-_G.AutoFarmRaid = true 
+_G.AutoFarmRaidNormal = true 
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -65,7 +65,7 @@ local function moveTo(targetPosition)
     end
 
     for _, waypoint in ipairs(path:GetWaypoints()) do
-        if not _G.AutoFarmRaid then break end
+        if not _G.AutoFarmRaidNormal then break end
 
         humanoid:MoveTo(waypoint.Position)
 
@@ -79,9 +79,9 @@ end
 
 UserInputService.InputBegan:Connect(function(input, gpe)
     if not gpe and input.KeyCode == Enum.KeyCode.P then
-        _G.AutoFarmRaid = not _G.AutoFarmRaid
-        if not _G.AutoFarmRaid then end
-        warn(" LuckyRaid Status: " .. (_G.AutoFarmRaid and "RUNNING" or "STOPPED"))
+        _G.AutoFarmRaidNormal = not _G.AutoFarmRaidNormal
+        if not _G.AutoFarmRaidNormal then end
+        warn(" LuckyRaid Status: " .. (_G.AutoFarmRaidNormal and "RUNNING" or "STOPPED"))
     end
 end)
 
@@ -108,7 +108,7 @@ end
 
 task.spawn(function()
     while task.wait(0.2) do
-        if _G.AutoFarmRaid then
+        if _G.AutoFarmRaidNormal then
             local target = getBreakable()
             if target and target.Parent then
                 local targetPos = target:GetPivot()
@@ -133,7 +133,7 @@ end)
 task.spawn(function()
     while task.wait() do
         pcall(function()
-            if _G.AutoFarmRaid and player.Character then
+            if _G.AutoFarmRaidNormal and player.Character then
                 local hum = player.Character:FindFirstChildOfClass("Humanoid")
                 if hum then
                     hum.WalkSpeed = getgenv().LuckyRaidSettings.WalkSpeed
@@ -145,7 +145,7 @@ end)
 
 
 while task.wait(0.5) do
-    if _G.AutoFarmRaid then
+    if _G.AutoFarmRaidNormal then
         local raid = RaidInstance.GetCurrent()
         local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 
