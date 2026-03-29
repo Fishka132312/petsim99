@@ -64,25 +64,33 @@ local Section = Tab:AddSection({
 
 local AutoFarmRaidLoaded = false
 
+local function updateBuyBoss()
+    if _G.AutoFarmRaid or _G.AutoFarmRaidNormal then
+        _G.BuyBoss2 = true
+    else
+        _G.BuyBoss2 = false
+    end
+end
+
 Tab:AddToggle({
     Name = "Lucky Raid Auto-Farm",
     Default = false,
-	Save = true,
+    Save = true,
     Flag = "LuckyRaidAutoFarm",
     Callback = function(Value)
-			_G.BuyBoss2 = Value
-			_G.AutoFarmRaid = Value
+        _G.AutoFarmRaid = Value
+        updateBuyBoss()
     end
 })
 
 Tab:AddToggle({
     Name = "Lucky Raid Auto-Farm Legit",
     Default = false,
-	Save = true,
+    Save = true,
     Flag = "LuckyRaidAutoFarmLegit",
     Callback = function(Value)
-			_G.BuyBoss2 = Value
-			_G.AutoFarmRaidNormal = Value
+        _G.AutoFarmRaidNormal = Value
+        updateBuyBoss()
     end
 })
 
