@@ -69,7 +69,7 @@ Tab:AddToggle({
     Save = true,
     Flag = "LuckyRaidAutoFarmLegit",
     Callback = function(Value)
-        _G.AutoFarmRaidNormal = Value
+        _G.AutoFarmRaidLegit = Value
     end
 })
 
