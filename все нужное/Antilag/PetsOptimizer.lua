@@ -1,4 +1,4 @@
-_G.OptimizePets = false
+_G.OptimizePets = true
 
 local petsFolder = workspace:WaitForChild("__THINGS"):WaitForChild("Pets")
 
