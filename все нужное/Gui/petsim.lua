@@ -28,6 +28,7 @@ local scripts = {
     'AutoHatchLegendary.lua',
 	'Raid/AutoRaidEbatLegit.lua',
 	'Raid/Raidfarm.lua',
+	'Antilag/BreakablesOptimizer.lua',
 	
 }
 
@@ -534,35 +535,17 @@ Tab:AddTextbox({
     end    
 })
  
---------------------------------MISC-----------------------------
+
+ --------------------------------Optimizator-----------------------------
 
 local Tab = Window:MakeTab({
-	Name = "Misc",
+	Name = "Optimizator",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 
 local Section = Tab:AddSection({
-	Name = "Tools"
-})
-
-Tab:AddButton({
-	Name = "Infinite Yield",
-	Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/ignore-it/refs/heads/main/infiniteyield'))()
-  	end    
-})
-
-
-Tab:AddButton({
-	Name = "Zap Hub",
-	Callback = function()
-    loadstring(game:HttpGet('https://zaphub.xyz/Exec'))()
-  	end    
-})
-
-local Section = Tab:AddSection({
-	Name = "Fps Boost"
+	Name = "Default"
 })
 
 loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Antilag/FpsCap.lua'))()
@@ -588,10 +571,23 @@ Tab:AddButton({
     end    
 })
 
-Tab:AddButton({
-	Name = "PetsOptimizer",
-	Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Antilag/PetsOptimizer.lua'))()
+Tab:AddToggle({
+    Name = "Breakables Optimizer",
+    Default = false,
+	Save = true,
+    Flag = "BreakablesOptimizer",
+    Callback = function(Value)
+	_G.OptimizeBreakables = Value
+    end    
+})
+
+Tab:AddToggle({
+    Name = "Pets Optimizer",
+    Default = false,
+	Save = true,
+    Flag = "PetsOptimizer",
+    Callback = function(Value)
+	 _G.OptimizePets = Value
     end    
 })
 
@@ -630,6 +626,33 @@ Tab:AddButton({
 	Callback = function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/Antilag/PetsOptimizer.lua'))()
     end    
+})
+
+--------------------------------MISC-----------------------------
+
+local Tab = Window:MakeTab({
+	Name = "Misc",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Tools"
+})
+
+Tab:AddButton({
+	Name = "Infinite Yield",
+	Callback = function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/ignore-it/refs/heads/main/infiniteyield'))()
+  	end    
+})
+
+
+Tab:AddButton({
+	Name = "Zap Hub",
+	Callback = function()
+    loadstring(game:HttpGet('https://zaphub.xyz/Exec'))()
+  	end    
 })
 
 Tab:AddButton({
