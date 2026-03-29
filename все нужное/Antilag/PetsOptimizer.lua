@@ -1,3 +1,5 @@
+_G.OptimizePets = true
+
 local petsFolder = workspace:WaitForChild("__THINGS"):WaitForChild("Pets")
 
 local trashClasses = {
@@ -7,8 +9,12 @@ local trashClasses = {
 }
 
 local function optimizePet(obj)
+    if not _G.OptimizePets then return end
+
     if obj:IsA("BasePart") or obj:IsA("MeshPart") then
         task.defer(function()
+            if not _G.OptimizePets then return end
+
             if obj:IsA("MeshPart") then
                 obj.MeshId = ""
                 obj.TextureID = ""
@@ -42,6 +48,8 @@ for _, desc in ipairs(petsFolder:GetDescendants()) do
 end
 
 petsFolder.DescendantAdded:Connect(function(newObj)
-    task.wait()
+    task.wait(0.1) -- Даем время объекту прогрузиться в workspace
     optimizePet(newObj)
 end)
+
+print("Оптимизация петов активна: " .. tostring(_G.OptimizePets))
