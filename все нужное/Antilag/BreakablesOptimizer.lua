@@ -2,35 +2,32 @@ _G.OptimizeBreakables = false
 
 local breakablesFolder = workspace:WaitForChild("__THINGS"):WaitForChild("Breakables")
 
-local function optimizeMesh(mesh)
-    if _G.OptimizeBreakables then
-        if mesh:IsA("MeshPart") or mesh:IsA("SpecialMesh") then
-            if mesh:IsA("MeshPart") then
-                mesh.MeshId = ""
-                mesh.TextureID = ""
-            else
-                mesh.MeshId = ""
-                mesh.TextureId = ""
-            end
-            
-            mesh.Transparency = 0.2
-            mesh.Size = Vector3.new(1, 1, 1)
+local function optimizeObject(obj)
+    if not _G.OptimizeBreakables then return end
+
+    local descendants = obj:GetDescendants()
+    table.insert(descendants, obj)
+
+    for _, v in pairs(descendants) do
+        if v:IsA("MeshPart") then
+            v.MeshId = ""
+            v.TextureID = ""
+            v.Transparency = 0.5
+            v.Size = Vector3.new(1, 1, 1)
+        elseif v:IsA("SpecialMesh") then
+            v.MeshId = ""
+            v.TextureId = ""
+        elseif v:IsA("Decal") or v:IsA("Texture") then
+            v:Destroy()
         end
     end
 end
 
-local function processBreakable(breakable)
-    local meshObj = breakable:FindFirstChild("1")
-    if meshObj then
-        optimizeMesh(meshObj)
-    end
-end
-
 breakablesFolder.ChildAdded:Connect(function(newBreakable)
-    task.wait(0.1)
-    processBreakable(newBreakable)
+    task.wait(0.2) 
+    optimizeObject(newBreakable)
 end)
 
 for _, b in pairs(breakablesFolder:GetChildren()) do
-    processBreakable(b)
+    optimizeObject(b)
 end
