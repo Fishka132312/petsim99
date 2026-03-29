@@ -26,9 +26,8 @@ local scripts = {
     'AutoRank/AutoCraftPets.lua',
     'autoraidupgrades.lua',
     'AutoHatchLegendary.lua',
-	'Raid/AutoRaidEbatLegit1.lua',
+	'Raid/AutoRaidEbatLegit.lua',
 	'Raid/Raidfarm.lua',
-	'Raid/buyboss2.lua',
 	
 }
 
@@ -65,6 +64,16 @@ local Section = Tab:AddSection({
 local AutoFarmRaidLoaded = false
 
 Tab:AddToggle({
+    Name = "Lucky Raid Auto-Farm Legit",
+    Default = false,
+    Save = true,
+    Flag = "LuckyRaidAutoFarmLegit",
+    Callback = function(Value)
+        _G.AutoFarmRaidNormal = Value
+    end
+})
+
+Tab:AddToggle({
     Name = "Lucky Raid Auto-Farm",
     Default = false,
     Save = true,
@@ -74,15 +83,6 @@ Tab:AddToggle({
     end
 })
 
-Tab:AddToggle({
-    Name = "Lucky Raid Auto-Farm Legit",
-    Default = false,
-    Save = true,
-    Flag = "LuckyRaidAutoFarmLegit",
-    Callback = function(Value)
-        _G.AutoFarmRaidNormal = Value
-    end
-})
 
 
 local Section = Tab:AddSection({
