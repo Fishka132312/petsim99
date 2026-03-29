@@ -5,8 +5,6 @@ task.spawn(function()
     local network = ReplicatedStorage:WaitForChild("Network")
     local giftRemote = network:WaitForChild("Redeem Free Gift")
     
-    print("Система сбора подарков готова. Ожидание (AutoCollectGifts = true)...")
-
     while true do
         if _G.AutoCollectGifts then
             for i = 1, 12 do
