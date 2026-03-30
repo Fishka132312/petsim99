@@ -31,6 +31,7 @@ local scripts = {
 	'Antilag/Antilag33.lua',
 	'things/AutoEatFruitsAndToys.lua',
 	'Raid/AutoUseBoosts.lua',
+	'Raid/AutoCraftKeys.lua'
 	
 }
 
@@ -87,7 +88,7 @@ Tab:AddToggle({
 })
 
 local Section = Tab:AddSection({
-	Name = "Boosts"
+	Name = "Main"
 })
 
 Tab:AddToggle({
@@ -99,6 +100,17 @@ Tab:AddToggle({
         _G.UseConsumables = Value
     end    
 })
+
+Tab:AddToggle({
+    Name = "Auto Craft Keys",
+    Default = false,
+	Save = true,
+    Flag = "AutoCraftKeys",
+    Callback = function(Value)
+        _G.CraftRaidKeys = Value
+    end    
+})
+
 
 local Section = Tab:AddSection({
 	Name = "Auto Upgrade"
