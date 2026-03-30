@@ -29,6 +29,8 @@ local scripts = {
 	'Raid/AutoRaidEbatLegit.lua',
 	'Raid/Raidfarm.lua',
 	'Antilag/Antilag33.lua',
+	'things/AutoEatFruitsAndToys.lua',
+	'Raid/AutoUseBoosts.lua',
 	
 }
 
@@ -84,7 +86,19 @@ Tab:AddToggle({
     end
 })
 
+local Section = Tab:AddSection({
+	Name = "Boosts"
+})
 
+Tab:AddToggle({
+    Name = "Auto Use Boosters",
+    Default = false,
+	Save = true,
+    Flag = "AutoUseBoosters",
+    Callback = function(Value)
+        _G.UseConsumables = Value
+    end    
+})
 
 local Section = Tab:AddSection({
 	Name = "Auto Upgrade"
@@ -365,6 +379,16 @@ Tab:AddToggle({
     Flag = "AutoClaimMail",
     Callback = function(Value)
        _G.ClaimMail = Value
+    end    
+})
+
+Tab:AddToggle({
+    Name = "Auto Eat Fruits/Toys",
+    Default = false,
+	Save = true,
+    Flag = "AutoEatFruitsAndToys",
+    Callback = function(Value)
+      _G.EatFruitsAndToys = Value
     end    
 })
 
