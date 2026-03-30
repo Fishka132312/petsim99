@@ -31,7 +31,8 @@ local scripts = {
 	'Antilag/Antilag33.lua',
 	'things/AutoEatFruitsAndToys.lua',
 	'Raid/AutoUseBoosts.lua',
-	'Raid/AutoCraftKeys.lua'
+	'Raid/AutoCraftKeys.lua',
+	'things/OpenMail.lua',
 	
 }
 
@@ -382,6 +383,16 @@ local Toggle = Tab:AddToggle({
 
 local Section = Tab:AddSection({
 	Name = "Auto Collect"
+})
+
+Tab:AddToggle({
+    Name = "Open/Close Mail",
+    Default = false,
+	Save = true,
+    Flag = "AutoClaimMail",
+    Callback = function(Value)
+       _G.OpenMail = Value
+    end    
 })
 
 Tab:AddToggle({
