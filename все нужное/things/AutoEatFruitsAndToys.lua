@@ -1,4 +1,4 @@
-_G.EatFruitsAndToys = false
+_G.EatFruitsAndToys = false 
 
 local Network = require(game:GetService("ReplicatedStorage").Library.Client.Network)
 local Save = require(game:GetService("ReplicatedStorage").Library.Client.Save)
@@ -21,32 +21,34 @@ local function getMyFruits()
     return {}
 end
 
-task.spawn(function()    
+task.spawn(function()
+    
     while true do
-        if _G.EatFruits then
+        if _G.EatFruitsAndToys then
             
             local fruits = getMyFruits()
             if #fruits > 0 then
                 for _, fruitHash in ipairs(fruits) do
-                    if not _G.EatFruits then break end
+                    if not _G.EatFruitsAndToys then break end 
+                    
                     Network.Fire("Fruits: Consume", fruitHash, 1)
-                    task.wait(0.1)
+                    task.wait(0.05)
                 end
             end
             
-            if _G.EatFruits then
+            if _G.EatFruitsAndToys then
                 for _, toyRemote in ipairs(toys) do
-                    if not _G.EatFruits then break end
+                    if not _G.EatFruitsAndToys then break end
                     
                     pcall(function()
                         game:GetService("ReplicatedStorage").Network[toyRemote]:InvokeServer()
                     end)
-                    
-                    task.wait(0.5)
+                    task.wait(0.1)
                 end
             end
             
-            task.wait(2)
+            task.wait(0.5) 
+            
         else
             task.wait(1) 
         end
