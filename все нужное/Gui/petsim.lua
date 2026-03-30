@@ -24,7 +24,7 @@ local scripts = {
     'AutoRank/UnlockEggs.lua',
     'AutoRank/AutoFlag.lua',
     'AutoRank/AutoCraftPets.lua',
-    'autoraidupgrades.lua',
+    'Raid/autoraidupgrades.lua',
     'AutoHatchLegendary.lua',
 	'Raid/AutoRaidEbatLegit.lua',
 	'Raid/Raidfarm.lua',
