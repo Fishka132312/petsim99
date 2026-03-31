@@ -34,6 +34,7 @@ local scripts = {
 	'Raid/AutoCraftKeys.lua',
 	'things/OpenMail.lua',
 	'things/AutoUseUltimate.lua',
+	'things/TeleportToBestWorld.lua',
 	
 }
 
@@ -310,7 +311,7 @@ Tab:AddToggle({
         _G.AutoMagnet = Value
     end    
 })
-
+ 
 Tab:AddToggle({
     Name = "Auto Use Ultimate",
     Default = false,
@@ -356,6 +357,16 @@ Tab:AddToggle({
     Flag = "AutoTeleporttoBestZone",
     Callback = function(Value)
        _G.AutoTeleportbestlocation = Value
+    end    
+})
+
+Tab:AddToggle({
+    Name = "Auto-Teleport to Best World",
+    Default = false,
+	Save = true,
+    Flag = "AutoTeleporttoBestWorld",
+    Callback = function(Value)
+         _G.Teleprttobestworld = Value
     end    
 })
 
