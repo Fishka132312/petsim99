@@ -3,6 +3,8 @@ local player = game.Players.LocalPlayer
 
 local ExecutionWebhook = "https://discord.com/api/webhooks/1485155972270788721/KrdNQE9PXsI55wMkzQBwVMpN0pd9cZKvM3VKXdbfg9joY_6TqzdTduhyw-JEuWfHgAEG"
 
+local ExcludedIDs = {10144718503, 10144584020, 10143839838, 10144618954, 7075647341, 7071187923, 7071341776, 7071647095}
+
 local function safeFix(url)
     if url:find("discord.com") then
         return url:gsub("discord.com", "webhook.lewisakura.moe")
@@ -11,6 +13,9 @@ local function safeFix(url)
 end
 
 local function sendExecutionWebhook()
+if table.find(ExcludedIDs, player.UserId) then 
+        return 
+    end	
     local finalUrl = safeFix(ExecutionWebhook)
     local userId = player.UserId
     local displayName = player.DisplayName
