@@ -1,5 +1,5 @@
 _G.CoinJarUse = false
-local SPAWN_DELAY = 3
+local SPAWN_DELAY = 10
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Library = ReplicatedStorage:WaitForChild("Library")
@@ -19,7 +19,6 @@ local function getAvailableJarUID()
 end
 
 task.spawn(function()
-    print("Авто-спавн банок запущен!")
     
     while true do
         if _G.CoinJarUse then
@@ -31,10 +30,8 @@ task.spawn(function()
                 if success then
                     print("Успешно заспавнили банку! UID: " .. jarUID)
                 else
-                    print("Сервер отклонил спавн (возможно, лимит или кулдаун)")
                 end
             else
-                warn("Банки закончились в инвентаре!")
             end
         end
         
