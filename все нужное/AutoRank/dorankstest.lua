@@ -176,6 +176,6 @@ end
 
         updateStates(needsFarm, needsJar, needsComet, needsHatch, needsGold, needsRainbow, needsLegendary)
         
-        task.wait(2)
+        task.wait(5)
     end
 end)
