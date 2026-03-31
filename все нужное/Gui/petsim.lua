@@ -33,6 +33,7 @@ local scripts = {
 	'Raid/AutoUseBoosts.lua',
 	'Raid/AutoCraftKeys.lua',
 	'things/OpenMail.lua',
+	'things/AutoUseUltimate.lua',
 	
 }
 
@@ -307,6 +308,16 @@ Tab:AddToggle({
     Flag = "AutoMagnet",
     Callback = function(Value)
         _G.AutoMagnet = Value
+    end    
+})
+
+Tab:AddToggle({
+    Name = "Auto Use Ultimate",
+    Default = false,
+	Save = true,
+    Flag = "AutoUseUltimate",
+    Callback = function(Value)
+          _G.UseUltimate = Value
     end    
 })
 
