@@ -1,7 +1,7 @@
 local EggCmds = require(game.ReplicatedStorage.Library.Client.EggCmds)
 
 _G.AutoHatchRaidEgg = false
-local SEARCH_RADIUS = 999
+local SEARCH_RADIUS = 200
 
 local Network = game:GetService("ReplicatedStorage"):WaitForChild("Network")
 local HatchRemote = Network:WaitForChild("CustomEggs_Hatch")
