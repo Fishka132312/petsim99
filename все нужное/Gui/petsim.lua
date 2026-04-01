@@ -35,6 +35,7 @@ local scripts = {
 	'things/OpenMail.lua',
 	'things/AutoUseUltimate.lua',
 	'things/TeleportToBestWorld.lua',
+	'Raid/AutoOpenNearRaidEgg.lua'
 	
 }
 
@@ -92,6 +93,16 @@ Tab:AddToggle({
 
 local Section = Tab:AddSection({
 	Name = "Main"
+})
+
+Tab:AddToggle({
+    Name = "Auto Hatch Near Raid Egg",
+    Default = false,
+    Save = true,
+    Flag = "AutoHatchNearRaidEgg",
+    Callback = function(Value)
+        _G.AutoHatchRaidEgg = Value
+    end
 })
 
 Tab:AddToggle({
