@@ -55,7 +55,7 @@ local function CraftCycle()
         if isNormal and not petData.r and petData._am and petData._am >= goldNeeded then
             local amountToCraft = math.floor(petData._am / goldNeeded)
             if amountToCraft > 0 then
-                print("[Auto-Gold] Крафчу: " .. petData.id .. " x" .. amountToCraft)
+                print("[Auto-Gold] Crafting: " .. petData.id .. " x" .. amountToCraft)
                 MachineCmds.AllowOpen("GoldMachine")
                 Network.Invoke("GoldMachine_Activate", uid, amountToCraft)
                 task.wait(0.3)
@@ -66,7 +66,7 @@ local function CraftCycle()
         if _G.CraftPetsRainbow and isGold and not petData.r and petData._am and petData._am >= rainbowNeeded then
             local amountToCraft = math.floor(petData._am / rainbowNeeded)
             if amountToCraft > 0 then
-                print("[Auto-Rainbow] Крафчу: " .. petData.id .. " x" .. amountToCraft)
+                print("[Auto-Rainbow] Crafting: " .. petData.id .. " x" .. amountToCraft)
                 MachineCmds.AllowOpen("SuperMachine")
                 MachineCmds.AllowOpen("RainbowMachine")
                 
