@@ -79,7 +79,7 @@ if string.find(title, "coin jar") then
     end
     
     if string.find(title, "use a") or string.find(title, "use %d+") or string.find(title, "break") then
-        print("--- [RANK] Активен квест на Coin Jar: " .. title)
+        print("--- [RANK] The active quest is Coin Jar: " .. title)
     end
 end
 
@@ -88,7 +88,7 @@ end
                         needsComet = true
                         needsFarm = true
                         if string.find(title, "use a") or string.find(title, "use %d+") then
-                            print("--- [RANK] Активен квест на Кометы: " .. title)
+                            print("--- [RANK] The active quest is Кометы: " .. title)
                         end
                     end
 
@@ -111,9 +111,7 @@ if string.find(title, "use") and string.find(title, "potion") and string.find(ti
     if tierNumber then
         _G.PotionToUse = tierNumber
         _G.AutoUsePotionsForRank = true
-        print("--- [RANK] Нашел квест на зелья! Тир: " .. tostring(tierNumber))
-    else
-        print("--- [RANK] Вижу квест, но не понял Тир из текста: " .. title)
+        print("--- [RANK] Potion quest! Tier: " .. tostring(tierNumber))
     end
 end
 
@@ -125,12 +123,12 @@ if string.find(title, "use") and string.find(title, "flag") then
     if amount then
         _G.UseFlag = tonumber(amount)
         needsFarm = true -- Это включит телепорт и фарм через updateStates
-        print("--- [RANK] Квест на флаги! Нужно использовать: " .. amount)
+        print("--- [RANK] Flags quest! Need to use: " .. amount)
     else
         -- Если число не найдено (например, "use a flag"), ставим 1 по умолчанию
         _G.UseFlag = 1
         needsFarm = true
-        print("--- [RANK] Квест на флаг (единичный)")
+        print("--- [RANK] Flag Quest (single)")
     end
 end
 
@@ -144,9 +142,9 @@ if isMakeQuest then
         needsHatch = true  -- Бежим к яйцам
         
         if string.find(title, "make a ") then
-            print("--- [RANK] Финальный рывок: Крафтим последнего Rainbow пета!")
+            print("--- [RANK] Final push: Crafting the latest Rainbow Pet!")
         else
-            print("--- [RANK] Активен квест на Rainbow петов!")
+            print("--- [RANK] The active quest is Rainbow Pets!")
         end
 
     -- Проверяем на Золотых (Gold/Golden)
@@ -155,9 +153,9 @@ if isMakeQuest then
         needsHatch = true  -- Бежим к яйцам
         
         if string.find(title, "make a ") then
-            print("--- [RANK] Финальный рывок: Крафтим последнего Gold пета!")
+            print("--- [RANK] Final push: Crafting the latest Gold Pet!")
         else
-            print("--- [RANK] Активен квест на Gold петов!")
+            print("--- [RANK] Active quest is Gold pets!")
         end
     end
 end
@@ -168,7 +166,7 @@ if string.find(title, "hatch") and (string.find(title, "legendary") or string.fi
     needsLegendary = true
     needsHatch = false -- Выключаем обычный хатч
     needsFarm = false  -- Выключаем ТП на фарм, чтобы стоять у яйца
-    print("--- [RANK] Квест на легендарку! Работает спец-скрипт.")
+    print("--- [RANK] A quest for a legendary!")
 end
                 end
             end
