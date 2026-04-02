@@ -14,7 +14,6 @@ local function getBreakables()
 end
 
 task.spawn(function()
-    print("Автофарм работает")
     
     while true do
         if _G.AutoTap then
