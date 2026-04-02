@@ -7,7 +7,6 @@ _G.UseFlag = nil
 local function useFlags(amount)
     local data = Save.Get()
     if not data or not data.Inventory then 
-        warn("Не удалось загрузить данные сохранения!")
         return 
     end
     
@@ -34,13 +33,11 @@ local function useFlags(amount)
                 end)
 
                 if not success then
-                    warn("Ошибка при активации флага " .. i .. ": " .. tostring(err))
                 end
             end)
             task.wait(0.1)
         end
     else
-        print("Флаги не найдены в инвентаре.")
     end
 end
 
