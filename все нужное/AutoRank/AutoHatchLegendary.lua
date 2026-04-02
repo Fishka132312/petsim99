@@ -57,13 +57,11 @@ local function MainLoop()
 
     local targetEgg = GetTargetEgg()
     if not targetEgg then 
-        print("❌ Не найдено подходящее яйцо")
         return 
     end
 
     local model = FindEggModel(targetEgg.eggNumber)
     if not model then
-        print("❌ Модель яйца #" .. targetEgg.eggNumber .. " не найдена на карте")
         return
     end
 
@@ -75,12 +73,9 @@ local function MainLoop()
     root.CFrame = model:GetPivot() * CFrame.new(0, 3, 5)
     task.wait(0.4)
 
-    local success, err = Network.Invoke("Eggs_RequestPurchase", targetEgg.id, EggCmds.GetMaxHatch())
-    
-    if success then
-    else
-        print("❌ Ошибка покупки: " .. tostring(err))
-    end
+    local success, err = pcall(function()
+    return Network.Invoke("Eggs_RequestPurchase", targetEgg.id, EggCmds.GetMaxHatch())
+end)
 
     if _G.ReturnToPosLegendary then
         task.wait(0.1)
