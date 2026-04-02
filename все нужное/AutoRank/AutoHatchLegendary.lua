@@ -1,5 +1,12 @@
+task.wait(1.5)
 _G.AutoHatchLegendary = false
 _G.ReturnToPosLegendary = true 
+
+local Library = game.ReplicatedStorage:WaitForChild("Library", 15)
+local function GetLib(path)
+    local s, res = pcall(function() return require(path) end)
+    return s and res or nil
+end
 
 local Library = game.ReplicatedStorage:WaitForChild("Library")
 local Network = require(Library.Client.Network)
@@ -8,6 +15,8 @@ local Directory = require(Library.Directory)
 local Variables = require(Library.Variables)
 local WorldsUtil = require(Library.Util.WorldsUtil)
 local PetsDir = require(Library.Directory.Pets)
+
+if not Network or not EggCmds then return end
 
 local function IsHatching()
     if Variables.OpeningEgg and Variables.OpeningEgg > 0 then return true end
