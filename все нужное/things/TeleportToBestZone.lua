@@ -62,7 +62,6 @@ local function startAutoTeleport()
                 local distToTP = (root.Position - zoneTP.Position).Magnitude
                 if distToTP > 20 then
                     root.CFrame = zoneTP.CFrame * CFrame.new(0, 3, 0)
-                    print("Прыжок на тех. точку Teleport для прогрузки...")
                 end
             end
             return
@@ -72,7 +71,6 @@ local function startAutoTeleport()
         
         if distance > FREE_DISTANCE then
             root.CFrame = mainPart.CFrame * CFrame.new(0, 3, 0)
-            print("Успешный ТП на Main зоны " .. bestNum)
         end
 
         if not stayConnection or currentBestNum ~= bestNum then
