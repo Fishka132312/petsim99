@@ -3,7 +3,6 @@ if _G.CraftRaidKeys == nil then
 end
 
 task.spawn(function()
-    print("Автокрафт ключей запущен!")
     
     while true do
         if _G.CraftRaidKeys then
