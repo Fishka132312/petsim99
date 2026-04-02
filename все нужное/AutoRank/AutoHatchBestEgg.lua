@@ -82,11 +82,6 @@ local function SmartHatch()
             end
         end
     end
-
-    if not eggModel then 
-        warn("Критическая ошибка: Яйцо #" .. tostring(eggNum) .. " не найдено в мире!")
-        return 
-    end
     
     local targetPart = eggModel.PrimaryPart or eggModel:FindFirstChild("Center") or eggModel:FindFirstChild("Tier") or eggModel:FindFirstChildWhichIsA("BasePart")
     if not targetPart then return end
@@ -110,7 +105,6 @@ local function SmartHatch()
 
     if not success then
         local errorMsg = tostring(err)
-        print("Пауза 5 сек. Причина: " .. errorMsg)
         
         if _G.ReturnToPos then
             root.CFrame = oldPos
@@ -121,12 +115,10 @@ local function SmartHatch()
 end
 
 task.spawn(function()
-    print("--- СИСТЕМА SMART-HATCH ЗАПУЩЕНА ---")
     while true do
         if _G.AutoHatchBestEggForRank then
             local ok, err = pcall(SmartHatch)
             if not ok then 
-                warn("Критическая ошибка цикла: " .. tostring(err)) 
             end
         end
         task.wait(0.5)
