@@ -36,7 +36,8 @@ local scripts = {
 	'things/AutoUseUltimate.lua',
 	'things/TeleportToBestWorld.lua',
 	'Raid/AutoOpenNearRaidEgg.lua',
-	'things/AntiAfk.lua'
+	'things/AntiAfk.lua',
+	'things/AntiAfk2.lua',
 	
 }
 
