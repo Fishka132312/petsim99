@@ -46,7 +46,6 @@ task.spawn(function()
                 if name ~= "Enabled" and name ~= "Interval" and shouldUpgrade == true and v_u_2[name] then
                     local upgradeData = v_u_2[name]
                     if canUpgrade(upgradeData) then
-                        print("Upgrading: " .. name)
                         v_u_3.Purchase(upgradeData) 
                     end
                 end
