@@ -4,8 +4,6 @@ local Library = game.ReplicatedStorage:WaitForChild("Library")
 local Directory = require(Library.Directory)
 local Network = require(Library.Client.Network)
 
-print("--- СЕРВИС AUTO-UNLOCK ЗАПУЩЕН ---")
-
 local function UnlockEverything()
     local count = 0
     for eggId, info in pairs(Directory.Eggs) do
