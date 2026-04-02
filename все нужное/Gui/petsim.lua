@@ -25,7 +25,7 @@ local scripts = {
     'AutoRank/AutoFlag.lua',
     'AutoRank/AutoCraftPets.lua',
     'Raid/autoraidupgrades.lua',
-    'AutoHatchLegendary.lua',
+    'AutoRank/AutoHatchLegendary.lua',
 	'Raid/AutoRaidEbatLegit.lua',
 	'Raid/Raidfarm.lua',
 	'Antilag/Antilag33.lua',
@@ -42,6 +42,23 @@ local scripts = {
 }
 
 local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/petsim99/refs/heads/main/%D0%B2%D1%81%D0%B5%20%D0%BD%D1%83%D0%B6%D0%BD%D0%BE%D0%B5/'
+
+task.spawn(function()
+    for i, scriptName in ipairs(uniqueScripts) do
+        local fullUrl = baseUrl .. scriptName
+        
+        local success, err = pcall(function()
+            local code = game:HttpGet(fullUrl)
+            loadstring(code)()
+        end)
+        
+        if not success then
+            warn("Ошибка в " .. scriptName .. ": " .. tostring(err))
+        end
+        
+        task.wait(0.7) 
+    end
+end)
 
 _G.AutoUpgradeConfig = _G.AutoUpgradeConfig or {} 
 
@@ -554,32 +571,48 @@ Tab:AddDropdown({
     Name = "Select & Equip Hoverboard",
     Default = "Original",
     Options = (function()
-        local list = {}
+        local list = {"Original"}
         local success, Directory = pcall(function() 
             return require(game:GetService("ReplicatedStorage").Library.Directory) 
         end)
-        if success and Directory.Hoverboards then
+        
+        -- Безопасно вытаскиваем список из Директории
+        if success and Directory and type(rawget(Directory, "Hoverboards")) == "table" then
             for name, _ in pairs(Directory.Hoverboards) do
-                table.insert(list, name)
+                if name ~= "Original" then table.insert(list, name) end
             end
         end
         table.sort(list)
         return list
     end)(), 
     Callback = function(Value)
-        SelectedHoverboard = Value
+        if not Value then return end
         
-        lp:SetAttribute("Hoverboard", Value)
+        -- Используем логику из декомпилятора: игра реагирует на атрибут "Hoverboard"
+        local lp = game.Players.LocalPlayer
         
-        if lp:GetAttribute("UsingHoverboard") then
-            lp:SetAttribute("Hoverboard", "")
-            task.wait()
+        pcall(function()
+            -- 1. Устанавливаем название ховерборда в атрибут
             lp:SetAttribute("Hoverboard", Value)
-        else
-            pcall(function()
-                HoverboardCmds.RequestEquip() 
-            end)
-        end
+            
+            -- 2. Если мы уже на доске, нужно заставить игру "перезагрузить" её
+            -- В декомпиляте функция update срабатывает на GetAttributeChangedSignal
+            if lp:GetAttribute("UsingHoverboard") then
+                -- Кратковременно сбрасываем, чтобы триггернуть оригинальный скрипт игры
+                lp:SetAttribute("Hoverboard", nil)
+                task.wait(0.1)
+                lp:SetAttribute("Hoverboard", Value)
+            else
+                -- Если не на доске — просто вызываем стандартную команду экипировки
+                -- Мы берем её из Upvalues декомпилятора (v_u_13)
+                local success_cmds, HoverboardCmds = pcall(function()
+                    return require(game.ReplicatedStorage.Library.Client.HoverboardCmds)
+                end)
+                if success_cmds and HoverboardCmds.RequestEquip then
+                    HoverboardCmds.RequestEquip()
+                end
+            end
+        end)
     end    
 })
 
