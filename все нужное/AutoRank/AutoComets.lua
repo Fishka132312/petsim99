@@ -19,7 +19,6 @@ local function getCometUID()
 end
 
 task.spawn(function()
-    print("Авто-спавн комет запущен!")
     
     while true do
         if _G.CometUse then
@@ -29,12 +28,10 @@ task.spawn(function()
                 local success = Network.Invoke("Comet_Spawn", cometUID)
                 
                 if success then
-                    print("Комета вызвана! UID: " .. cometUID)
+                    print("Successfully spawned the comet! UID: " .. cometUID)
                 else
-                    print("Сервер отклонил вызов (возможно, лимит на локации)")
                 end
             else
-                warn("Кометы закончились!")
             end
         end
         
