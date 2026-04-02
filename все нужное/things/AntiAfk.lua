@@ -1,26 +1,27 @@
-local Network = require(game:GetService("ReplicatedStorage").Library.Client.Network)
+local VirtualUser = game:GetService("VirtualUser")
 local VirtualInputManager = game:GetService("VirtualInputManager")
+local Players = game:GetService("Players")
 
+local LP = Players.LocalPlayer
+
+print("-=0=")
+
+LP.Idled:Connect(function()
+    VirtualUser:CaptureController()
+    VirtualUser:ClickButton2(Vector2.new(0,0))
+end)
 
 task.spawn(function()
     while true do
-        local randomTime = math.random(5, 15) + math.random()
-        Network.Fire("Idle Tracking: Update Timer", randomTime)
-        
-        Network.Fire("Idle Tracking: Focus Changed", true)
+        task.wait(math.random(20, 40))
         
         VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Space, false, game)
-        task.wait(0.1)
+        task.wait(0.2)
         VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Space, false, game)
-
-        task.wait(math.random(15, 25))
+        
+        VirtualUser:Button1Down(Vector2.new(100, 100))
+        task.wait(0.1)
+        VirtualUser:Button1Up(Vector2.new(100, 100))
+        
     end
 end)
-
-local oldFire = Network.Fire
-Network.Fire = function(self, name, ...)
-    if name == "Idle Tracking: Stop Timer" then
-        return
-    end
-    return oldFire(self, name, ...)
-end
