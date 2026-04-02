@@ -88,7 +88,7 @@ end
                         needsComet = true
                         needsFarm = true
                         if string.find(title, "use a") or string.find(title, "use %d+") then
-                            print("--- [RANK] The active quest is Кометы: " .. title)
+                            print("--- [RANK] The active quest is Comets: " .. title)
                         end
                     end
 
