@@ -28,7 +28,7 @@ task.spawn(function()
                 local success, ray = Network.Invoke("CoinJar_Spawn", jarUID)
                 
                 if success then
-                    print("Успешно заспавнили банку! UID: " .. jarUID)
+                    print("Successfully spawned the jar! UID: " .. jarUID)
                 else
                 end
             else
