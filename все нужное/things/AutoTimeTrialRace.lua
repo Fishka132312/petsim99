@@ -1,6 +1,6 @@
 -- === Настройки ===
 getgenv().TimeTrialSettings = {
-    TweenSpeed = 95,
+    TweenSpeed = 85, -- Чуть снизил для стабильности, 95 иногда кикает
     DetectionRadius = 120
 }
 
@@ -14,10 +14,8 @@ local player = Players.LocalPlayer
 -- Библиотеки игры
 local Library = ReplicatedStorage:WaitForChild("Library")
 local InstancingCmds = require(Library.Client.InstancingCmds)
-local things = workspace:WaitForChild("__THINGS")
-local breakables = things:WaitForChild("Breakables")
 
-_G.TimeTrialFarm = false -- Поставил true, чтобы сразу работал
+_G.TimeTrialFarm = true -- Сразу включено
 
 -- === ФУНКЦИЯ ПРОВЕРКИ ГУИ ===
 local function isRoundFinished()
@@ -30,46 +28,47 @@ local function isRoundFinished()
     return false
 end
 
--- === СИСТЕМА ПЕРЕДВИЖЕНИЯ ===
+-- === БЕЗОПАСНАЯ СИСТЕМА ПЕРЕДВИЖЕНИЯ ===
+local currentTween = nil
 local function tweenTo(targetCFrame)
     local character = player.Character
     local hrp = character and character:FindFirstChild("HumanoidRootPart")
     
     if not hrp or not _G.TimeTrialFarm or isRoundFinished() then return end
 
-    local targetPos = targetCFrame.Position
-    local dist = (hrp.Position - targetPos).Magnitude
+    local dist = (hrp.Position - targetCFrame.Position).Magnitude
     local duration = dist / getgenv().TimeTrialSettings.TweenSpeed
     
-    local tween = TweenService:Create(hrp, TweenInfo.new(duration, Enum.EasingStyle.Linear), {CFrame = targetCFrame})
+    -- Если уже летим, отменяем старый твин
+    if currentTween then currentTween:Cancel() end
+
+    currentTween = TweenService:Create(hrp, TweenInfo.new(duration, Enum.EasingStyle.Linear), {CFrame = targetCFrame})
     
     local completed = false
     local connection
     
-    -- Мониторинг во время полета (без утечек памяти)
-    connection = RunService.Heartbeat:Connect(function()
-        if not _G.TimeTrialFarm or isRoundFinished() then
-            tween:Cancel()
+    connection = RunService.Stepped:Connect(function()
+        -- Если условия изменились или персонаж пропал — мгновенный стоп
+        if not _G.TimeTrialFarm or isRoundFinished() or not hrp.Parent then
+            if currentTween then currentTween:Cancel() end
             completed = true
-            if connection then connection:Disconnect() connection = nil end
+            connection:Disconnect()
         end
     end)
 
-    tween:Play()
-
-    -- Ждем завершения
-    tween.Completed:Connect(function()
-        completed = true
-        if connection then connection:Disconnect() connection = nil end
-    end)
-
-    -- Ждем физического окончания процесса
-    repeat task.wait() until completed or not _G.TimeTrialFarm
-    if connection then connection:Disconnect() connection = nil end
+    currentTween:Play()
+    currentTween.Completed:Wait()
+    
+    if connection.Connected then connection:Disconnect() end
+    completed = true
 end
 
 -- === ПОИСК БЛИЖАЙШЕЙ ЦЕЛИ ===
 local function getClosestBreakable()
+    local things = workspace:FindFirstChild("__THINGS")
+    local breakables = things and things:FindFirstChild("Breakables")
+    if not breakables then return nil end
+
     local character = player.Character
     local hrp = character and character:FindFirstChild("HumanoidRootPart")
     if not hrp then return nil end
@@ -94,39 +93,42 @@ end
 
 -- === ОСНОВНОЙ ЦИКЛ ===
 task.spawn(function()
-    print("--- Time Trial Farm v8.0 FIXED ---")
+    print("--- Time Trial Farm FIXED v9.0 ---")
     
-    while task.wait(0.3) do
+    while task.wait(0.5) do -- Увеличена задержка цикла для разгрузки CPU
         if not _G.TimeTrialFarm then continue end
 
         local character = player.Character
         local hrp = character and character:FindFirstChild("HumanoidRootPart")
         
-        if not hrp then continue end -- Ждем прогрузки персонажа
+        -- Если персонажа нет, ждем и не выполняем код дальше
+        if not hrp then 
+            task.wait(1)
+            continue 
+        end
 
         local instanceID = InstancingCmds.GetInstanceID()
 
         if instanceID ~= "TimeTrial" then
-            -- Вход в игру
             print("Входим в Time Trial...")
             pcall(function() InstancingCmds.Enter("TimeTrial") end)
-            task.wait(6) -- Увеличил задержку прогрузки, чтобы не крашило при входе
+            task.wait(7) -- Даем время на полную прогрузку мира
         else
-            -- Проверка на финиш
             if isRoundFinished() then
                 print("Раунд окончен, выходим...")
+                if currentTween then currentTween:Cancel() end
                 pcall(function() InstancingCmds.Leave() end)
-                task.wait(4)
+                task.wait(5) -- Пауза перед следующим циклом
                 continue
             end
 
-            -- Логика фарма
             local target = getClosestBreakable()
-            if target then
+            if target and target.Parent then
                 local targetPivot = target:GetPivot()
-                local targetPos = (targetPivot * CFrame.new(0, 6, 0)).Position
+                -- Смещение вверх, чтобы не застревать в текстурах
+                local targetPos = (targetPivot * CFrame.new(0, 5, 0)).Position
                 
-                if (hrp.Position - targetPos).Magnitude > 8 then
+                if (hrp.Position - targetPos).Magnitude > 7 then
                     tweenTo(CFrame.new(targetPos))
                 end
             end
