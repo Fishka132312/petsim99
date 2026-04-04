@@ -15,7 +15,7 @@ local player = Players.LocalPlayer
 local Library = ReplicatedStorage:WaitForChild("Library")
 local InstancingCmds = require(Library.Client.InstancingCmds)
 
-_G.TimeTrialFarm = true -- Сразу включено
+_G.TimeTrialFarm = false -- Сразу включено
 
 -- === ФУНКЦИЯ ПРОВЕРКИ ГУИ ===
 local function isRoundFinished()
