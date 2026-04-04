@@ -1,6 +1,6 @@
 -- === Настройки ===
 getgenv().TimeTrialSettings = {
-    TweenSpeed = 110,
+    TweenSpeed = 95,
     DetectionRadius = 120
 }
 
