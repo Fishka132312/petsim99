@@ -38,6 +38,7 @@ local scripts = {
 	'Raid/AutoOpenNearRaidEgg.lua',
 	'things/AntiAfk.lua',
 	'things/AntiAfk2.lua',
+	'things/AutoTimeTrialRace.lua',
 	
 }
 
@@ -430,6 +431,18 @@ local Toggle = Tab:AddToggle({
     Default = false,
     Callback = function(Value)
         _G.Autorank = Value
+    end
+})
+
+local Section = Tab:AddSection({
+	Name = "Auto Time Trial"
+})
+
+local Toggle = Tab:AddToggle({
+    Name = "Auto Time Trial Race",
+    Default = false,
+    Callback = function(Value)
+        _G.TimeTrialFarm = Value
     end
 })
 
