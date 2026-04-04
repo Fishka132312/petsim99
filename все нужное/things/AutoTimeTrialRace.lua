@@ -17,7 +17,7 @@ local InstancingCmds = require(Library.Client.InstancingCmds)
 local things = workspace:WaitForChild("__THINGS")
 local breakables = things:WaitForChild("Breakables")
 
-_G.TimeTrialFarm = true -- Поставил true, чтобы сразу работал
+_G.TimeTrialFarm = false -- Поставил true, чтобы сразу работал
 
 -- === ФУНКЦИЯ ПРОВЕРКИ ГУИ ===
 local function isRoundFinished()
