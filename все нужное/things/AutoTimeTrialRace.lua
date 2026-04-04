@@ -1,6 +1,6 @@
 getgenv().TimeTrialSettings = {
-    TweenSpeed = 95,
-    DetectionRadius = 100
+    TweenSpeed = 110,
+    DetectionRadius = 120
 }
 
 local Players = game:GetService("Players")
