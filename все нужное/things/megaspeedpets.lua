@@ -68,7 +68,6 @@ task.spawn(function()
                 end
             end
         end
-        
         task_wait() 
     end
 end)
