@@ -1,10 +1,11 @@
 _G.AutoTap = false
 
-local RADIUS = 150
-local MAX_TARGETS = 1
+local RADIUS = 15-
+local MAX_TARGETS = 10
 
 local player = game.Players.LocalPlayer
 local replicatedStorage = game:GetService("ReplicatedStorage")
+local runService = game:GetService("RunService")
 local network = replicatedStorage:WaitForChild("Network"):WaitForChild("Breakables_PlayerDealDamage")
 
 local function getBreakables()
@@ -13,45 +14,32 @@ local function getBreakables()
     return things:FindFirstChild("Breakables")
 end
 
-task.spawn(function()
+runService.Heartbeat:Connect(function()
+    if not _G.AutoTap then return end
     
-    while true do
-        if _G.AutoTap then
-            local character = player.Character
-            local root = character and character:FindFirstChild("HumanoidRootPart")
-            
-            if root then
-                local breakablesPath = getBreakables()
-                if breakablesPath then
-                    local rootPos = root.Position
-                    local targets = {}
-                    local allBreakables = breakablesPath:GetChildren()
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    
+    local breakablesPath = getBreakables()
+    if not breakablesPath then return end
+    
+    local rootPos = root.Position
+    local count = 0
+    local objects = breakablesPath:GetChildren()
 
-                    for i = 1, #allBreakables do
-                        local obj = allBreakables[i]
-                        local part = obj:FindFirstChild("Main") or obj:FindFirstChildWhichIsA("BasePart")
-                        
-                        if part then
-                            local dist = (rootPos - part.Position).Magnitude
-                            if dist <= RADIUS then
-                                table.insert(targets, {instance = obj, distance = dist})
-                            end
-                        end
-                    end
-
-                    table.sort(targets, function(a, b)
-                        return a.distance < b.distance
-                    end)
-
-                    local limit = math.min(#targets, MAX_TARGETS)
-                    for i = 1, limit do
-                        if not _G.AutoTap then break end
-                        network:FireServer(targets[i].instance.Name)
-                    end
-                end
+    for i = 1, #objects do
+        if count >= MAX_TARGETS then break end
+        
+        local obj = objects[i]
+        local part = obj:FindFirstChild("Main") or obj:FindFirstChildWhichIsA("BasePart")
+        
+        if part then
+            local distanceSquared = (rootPos - part.Position).Magnitude
+            if distanceSquared <= RADIUS then
+                network:FireServer(obj.Name)
+                count = count + 1
             end
         end
-        
-        task.wait()
     end
 end)
