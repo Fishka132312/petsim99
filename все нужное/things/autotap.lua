@@ -1,6 +1,6 @@
 _G.AutoTap = false
 
-local RADIUS = 15-
+local RADIUS = 15
 local MAX_TARGETS = 10
 
 local player = game.Players.LocalPlayer
