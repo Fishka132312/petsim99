@@ -24,21 +24,18 @@ local scripts = {
     'AutoRank/UnlockEggs.lua',
     'AutoRank/AutoFlag.lua',
     'AutoRank/AutoCraftPets.lua',
-    'Raid/autoraidupgrades.lua',
     'AutoRank/AutoHatchLegendary.lua',
-	'Raid/AutoRaidEbatLegit.lua',
-	'Raid/Raidfarm.lua',
 	'Antilag/Antilag33.lua',
 	'things/AutoEatFruitsAndToys.lua',
-	'Raid/AutoUseBoosts.lua',
-	'Raid/AutoCraftKeys.lua',
 	'things/OpenMail.lua',
 	'things/AutoUseUltimate.lua',
 	'things/TeleportToBestWorld.lua',
-	'Raid/AutoOpenNearRaidEgg.lua',
 	'things/AntiAfk.lua',
 	'things/AntiAfk2.lua',
 	'things/AutoTimeTrialRace.lua',
+    'Easter2026/SpamOpenEasterEggs2026.lua',
+    'Easter2026/GameAutoFarmGP.lua',
+    'Easter2026/AutoFarmEveryWhere1.lua'
 	
 }
 
@@ -86,218 +83,39 @@ local Tab = Window:MakeTab({
 })
 
 local Section = Tab:AddSection({
-	Name = "Raid Farm"
+	Name = "Easter 2026"
 })
 
-local AutoFarmRaidLoaded = false
-
+_G.FarmEveryWhere = false
 Tab:AddToggle({
-    Name = "Lucky Raid Auto-Farm Legit",
+    Name = "Faster Easter Eggs",
     Default = false,
     Save = true,
-    Flag = "LuckyRaidAutoFarmLegit",
+    Flag = "FasterEasterEggs",
     Callback = function(Value)
-        _G.AutoFarmRaidLegit = Value
+        _G.AutoOpenEaster2026 = Value
     end
 })
 
 Tab:AddToggle({
-    Name = "Lucky Raid Auto-Farm",
+    Name = "Turn Auto Farm Easter",
     Default = false,
-    Save = true,
-    Flag = "LuckyRaidAutoFarm",
+    Save = false,
+    Flag = "TurnAutoFarmEaster",
     Callback = function(Value)
-        _G.AutoFarmRaid = Value
-    end
-})
-
-local Section = Tab:AddSection({
-	Name = "Main"
-})
-
-Tab:AddToggle({
-    Name = "Auto Hatch Near Raid Egg",
-    Default = false,
-    Save = true,
-    Flag = "AutoHatchNearRaidEgg",
-    Callback = function(Value)
-        _G.AutoHatchRaidEgg = Value
+         _G.FarmEveryWhere = Value
     end
 })
 
 Tab:AddToggle({
-    Name = "Auto Use Boosters",
+    Name = "Auto Farm Easter",
     Default = false,
-	Save = true,
-    Flag = "AutoUseBoosters",
+    Save = false,
+    Flag = "AutoFarmEaster",
     Callback = function(Value)
-        _G.UseConsumables = Value
-    end    
+         _G.AutoSpeedPets2 = Value
+    end
 })
-
-Tab:AddToggle({
-    Name = "Auto Craft Keys",
-    Default = false,
-	Save = true,
-    Flag = "AutoCraftKeys",
-    Callback = function(Value)
-        _G.CraftRaidKeys = Value
-    end    
-})
-
-
-local Section = Tab:AddSection({
-	Name = "Auto Upgrade"
-})
-
-Tab:AddToggle({
-    Name = "Raid Pets Slots",
-    Default = false,
-	Save = true,
-    Flag = "RaidPetsSlotsUpgrage",
-    Callback = function(Value)
-        _G.AutoUpgradeConfig.LuckyRaidPets = Value
-    end    
-})
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid Pets",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidPetsUpgrage",
-    Callback = function(Value)
-    _G.AutoUpgradeConfig.LuckyRaidDamage = Value
-    end    
-})
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid Attack Speed",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidAttackSpeedUpgrage",
-    Callback = function(Value)
-     _G.AutoUpgradeConfig.LuckyRaidAttackSpeed = Value
-    end    
-})
-
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid Pet Speed",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidPetSpeedUpgrage",
-    Callback = function(Value)
-       _G.AutoUpgradeConfig.LuckyRaidPetSpeed = Value
-    end    
-})
-
-
-
-Tab:AddToggle({
-    Name = "Lucky RaidEgg Cost",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidEggCostUpgrage",
-    Callback = function(Value)
-       _G.AutoUpgradeConfig.LuckyRaidEggCost = Value
-    end    
-})
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid More Currency",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidMoreCurrencyUpgrage",
-    Callback = function(Value)
-       _G.AutoUpgradeConfig.LuckyRaidMoreCurrency = Value
-    end    
-})
-
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid XP",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidXPUpgrage",
-    Callback = function(Value)
-       _G.AutoUpgradeConfig.LuckyRaidXP = Value
-    end    
-})
-
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid Better Loots",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidBetterLootsUpgrage",
-    Callback = function(Value)
-       _G.AutoUpgradeConfig.LuckyRaidBetterLoot = Value
-    end    
-})
-
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid Huge Chest",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidHugeChestUpgrage",
-    Callback = function(Value)
-        _G.AutoUpgradeConfig.LuckyRaidHugeChest = Value
-    end    
-})
-
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid Titanic Chest",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidTitanicChestUpgrage",
-    Callback = function(Value)
-       _G.AutoUpgradeConfig.LuckyRaidTitanicChest = Value
-    end    
-})
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid Key Drops",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidKeyDropsUpgrage",
-    Callback = function(Value)
-       _G.AutoUpgradeConfig.LuckyRaidKeyDrops = Value
-    end    
-})
-
-
-Tab:AddToggle({
-    Name = "Lucky Raid Boss Huge Chances",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidBossHugeChancesUpgrage",
-    Callback = function(Value)
-       _G.AutoUpgradeConfig.LuckyRaidBossHugeChances = Value
-    end    
-})
-
-Tab:AddToggle({
-    Name = "Lucky Raid Boss Titanic Chances",
-    Default = false,
-	Save = true,
-    Flag = "LuckyRaidBossTitanicChancesUpgrage",
-    Callback = function(Value)
-       _G.AutoUpgradeConfig.LuckyRaidBossTitanicChances = Value
-    end    
-})
- 
- 
 
 --------------------------------Autofarm-----------------------------
 
