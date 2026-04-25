@@ -1,5 +1,5 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/jensonhirst/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "MeowSploit", HidePremium = false, SaveConfig = true, ConfigFolder = "MeowSploit"})
+local Window = OrionLib:MakeWindow({Name = "MeowlSploit", HidePremium = false, SaveConfig = true, ConfigFolder = "petsim99"})
 
 local scripts = {
     'things/autotap.lua',
